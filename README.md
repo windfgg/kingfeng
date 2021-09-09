@@ -37,7 +37,7 @@ QL_URL:
 QL_Client_ID: 
 #青龙OpenAPI Client_Secret
 QL_Client_Secret: 
-#管理员密钥 第一次启动会自动生成
+#管理员密钥 第一次启动会自动生成 登录页面直接输入即可登录管理员
 SecretKey: 
 #wskey转cookie脚本全名称 如有重复 默认执行第一个
 WsKeyTaskFullName: wskey转换
