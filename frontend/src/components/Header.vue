@@ -2,8 +2,13 @@
   <div id="header">
     <div class="header-wrapper">
       <div class="header-content">
-        <img src="../assets/logo.png" class="header-logo" />
-        <div class="header-tittle">{{ title }}</div>
+        <img
+          src="../assets/logo.png"
+          class="header-logo"
+        >
+        <div class="header-tittle">
+          {{ title }}
+        </div>
       </div>
     </div>
   </div>

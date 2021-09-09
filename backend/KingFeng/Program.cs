@@ -17,9 +17,13 @@ namespace KingFeng
 {
     public class Program
     {
-        public static string ConfigPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "config.yaml");
+        public static string ConfigPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory,"config", "config.yaml");
         public static int Main(string[] args)
         {
+            if (!Directory.Exists(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "config")))
+            {
+                Directory.CreateDirectory(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "config"));
+            }
             if (!File.Exists(ConfigPath))
             {
                 var config = new KingFeng.Models.ConfigModel()

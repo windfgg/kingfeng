@@ -10,8 +10,7 @@ KingFeng 仅支持 qinglong 2.9+
 
 不提供 `技术上的任何帮助`
 
-[TG 频道]()
-
+[TG 频道](https://t.me/joinchat/H3etBWYzLKpiMWVl)    [TG 群组](https://t.me/joinchat/XV2AZcvzFIUxNjI9)
 ## 功能
 
 - [x] 添加/更新wskey 自动执行wskey转换
@@ -30,10 +29,10 @@ KingFeng 仅支持 qinglong 2.9+
 配置文件第一次部署后端会自动生成
 配置文件所有项必填 如不填(无法预知的后果)
 
-`backend` config.yaml
+`backend`
 ```yaml
 #青龙地址 默认为空 必须以/结尾
-QL_URL: http://localhost:5700/
+QL_URL: 
 #青龙OpenAPI Client_ID
 QL_Client_ID: 
 #青龙OpenAPI Client_Secret
@@ -45,10 +44,14 @@ WsKeyTaskFullName: wskey转换
 # 首页的抓取wskey教程链接 默认 http://www.baidu.com
 Course: http://www.baidu.com
 ```
-`frontend/dist` .env
+`frontend` 
 ```bash
-# KingFeng 运行端口
-PORT=5710
+NODE_ENV=production
+VUE_APP_PREVIEW=false
+#端口号
+PORT=5780
+#接口根地址
+VUE_APP_RootUrl=http://localhost:5000/
 ```
 <!-- ### 推送卡片
 
@@ -61,13 +64,23 @@ PORT=5710
 
 ## 项目指南
 ```bash
+
+docker pull ranqi03/kingfeng:latest
+
 docker run -dit \
+   -v $PWD/kingfeng/:/app/config/ \
    -p 5000:80 \
    --name kingfeng \
    --hostname kingfeng \
    ranqi03/kingfeng:latest
 
+wget https://github.com/QiFengg/kingfeng/releases/download/frontend/frontend.zip && unzip frontend.zip
 
+cd ./dist && npm install && pm2 start
+
+pm2 restart kingfeng
+
+pm2 stop kingfeng
 ```
 <!-- ## 注意事项 -->
 

@@ -19,13 +19,21 @@
 
 <script>
 export default {
+  data () {
+    return {
+      p1: "请关闭免密支付以及打开支付验密",
+      p2: "建议微信绑定账户以保证提现能到账",
+      p3: "需手动抓取Cookies 教程请点击下面链接获取",
+      p4: undefined,
+    };
+  },
   created () {
   },
   mounted () {
     this.$http.get(this.$request_url + 'api/config').then(response => {
       this.p4 = response.data.data
       if (response.status === 0) {
-        console.log('111')
+        response
       }
     }, (response) => {
       response
@@ -36,14 +44,6 @@ export default {
     open () {
       window.open(this.p4, '_blank') // 新窗口打开外链接
     }
-  },
-  data () {
-    return {
-      p1: "请关闭免密支付以及打开支付验密",
-      p2: "建议微信绑定账户以保证提现能到账",
-      p3: "需手动抓取Cookies 教程请点击下面链接获取",
-      p4: undefined,
-    };
   },
 };
 </script>

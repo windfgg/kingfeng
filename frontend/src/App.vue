@@ -32,7 +32,7 @@
 <script setup>
 import Header from "./components/Header.vue"
 export default {
-  name: 'app',
+  name: 'App',
   components: {
     Header,
   }

@@ -18,9 +18,9 @@
             <!-- <a-button type="primary" shape="round" @click="logout"
               >修改SecretKey
             </a-button> -->
-            <a-button type="danger" shape="round" @click="logout"
-              >退出登录</a-button
-            >
+            <a-button type="danger" shape="round" @click="logout">
+              退出登录
+            </a-button>
           </a-space>
         </div>
       </div>
@@ -58,21 +58,21 @@
       </div>
       <div class="ant-card-body">
         <a-input
-          type="text"
           v-model="taskName"
+          type="text"
           placeholder="请输入任务全名称"
           style="width: 80%"
-        ></a-input>
+        />
 
         <div>
           <br />
           <a-space size="large">
-            <a-button type="primary" shape="round" @click="task"
-              >执行任务</a-button
-            >
-            <a-button type="primary" shape="round" @click="wskeytask"
-              >wskey转换</a-button
-            >
+            <a-button type="primary" shape="round" @click="task">
+              执行任务
+            </a-button>
+            <a-button type="primary" shape="round" @click="wskeytask">
+              wskey转换
+            </a-button>
           </a-space>
         </div>
       </div>
@@ -89,7 +89,7 @@
 
       <div class="ant-card-body">
         <div>
-          <a-textarea id="logs" rows="10" v-model="logs" />
+          <a-textarea id="logs" v-model="logs" rows="10" />
         </div>
         <br />
       </div>
@@ -100,6 +100,14 @@
 <script>
 //import Vue from 'vue'
 export default {
+  data () {
+    return {
+      taskName: "",
+      logs: undefined,
+      adminkey: "",
+      timer: undefined
+    }
+  },
   //窗体刚创建没渲染时候
   created () {
     const adminkey = localStorage.getItem('adminkey')
@@ -130,7 +138,7 @@ export default {
     task () {
       // const taksName = ;
       // const adminkey = ;
-      this.$http.put(this.$request_url + "api/task?taskName=" + this.taskName + "&key=" + this.adminkey).then((response) => {
+      this.$http.put(por + "api/task?taskName=" + this.taskName + "&key=" + this.adminkey).then((response) => {
         if (response.data.code === 200) {
           this.$message.success(this.taskName + "执行成功", 1.5);
           clearInterval(this.timer) // 清除定时器
@@ -185,14 +193,6 @@ export default {
       setTimeout(() => {
         this.$router.push('/')
       }, 1000)
-    }
-  },
-  data () {
-    return {
-      taskName: "",
-      logs: undefined,
-      adminkey: "",
-      timer: undefined
     }
   },
 }

@@ -28,9 +28,11 @@ namespace KingFeng.Services
     public class ConfigServices: IConfigServices
     {
         public readonly ILogger<ConfigServices> _logger;
+
         public ConfigServices(ILogger<ConfigServices> logger)
         {
             _logger = logger;
+
             getConfig();
         }
 

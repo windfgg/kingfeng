@@ -4,33 +4,53 @@
     <div class="Card ant-card ant-card-bordered">
       <div class="ant-card-head">
         <div class="ant-card-head-wrapper">
-          <a-icon type="crown" theme="twoTone" />
-          <div class="ant-card-head-title">个人中心</div>
+          <a-icon
+            type="crown"
+            theme="twoTone"
+          />
+          <div class="ant-card-head-title">
+            个人中心
+          </div>
         </div>
       </div>
       <div class="ant-card-body">
-        <br />
+        <br>
         <div>
           <p>昵称：{{ remarks }}</p>
           <!-- <p>更新时间：{{ timestamp }}</p> -->
           <p>
             状态：
-            <a-icon :type="statuss" theme="twoTone" :two-tone-color="color" />{{
+            <a-icon
+              :type="statuss"
+              theme="twoTone"
+              :two-tone-color="color"
+            />{{
               status == 0 ? " 正常" : " 异常"
             }}
           </p>
         </div>
-        <br />
-        <a-input v-model="wskey" placeholder="请输入新的wskey"></a-input>
+        <br>
+        <a-input
+          v-model="wskey"
+          placeholder="请输入新的wskey"
+        />
         <div>
-          <br />
+          <br>
           <a-space>
-            <a-button type="primary" shape="round" @click="updatewskey"
-              >更新wskey
-            </a-button>
-            <a-button type="danger" shape="round" @click="logout"
-              >退出登录</a-button
+            <a-button
+              type="primary"
+              shape="round"
+              @click="updatewskey"
             >
+              更新wskey
+            </a-button>
+            <a-button
+              type="danger"
+              shape="round"
+              @click="logout"
+            >
+              退出登录
+            </a-button>
             <!-- <a-button type="danger" shape="round" @click="remove"
               >删除账号</a-button -->
           </a-space>
@@ -42,12 +62,20 @@
     <div class="Card ant-card ant-card-bordered">
       <div class="ant-card-head">
         <div class="ant-card-head-wrapper">
-          <a-icon type="pushpin" theme="twoTone" />
-          <div class="ant-card-head-title">扫码接收通知</div>
+          <a-icon
+            type="pushpin"
+            theme="twoTone"
+          />
+          <div class="ant-card-head-title">
+            扫码接收通知
+          </div>
         </div>
       </div>
       <div class="ant-card-body">
-        <img class="img" :src="require('../assets/' + 'push.png')" />
+        <img
+          class="img"
+          :src="require('../assets/' + 'push.png')"
+        >
       </div>
     </div>
   </div>
@@ -55,6 +83,22 @@
 
 <script>
 export default {
+  data () {
+    return {
+      wskey: "",
+      remarks: "",
+      timestamp: undefined,
+      status: 0
+    }
+  },
+  computed: {
+    statuss: function () {
+      return this.status == 0 ? 'check-circle' : 'close-circle'
+    },
+    color: function () {
+      return this.status == 0 ? '#52c41a' : '#eb2f96'
+    },
+  },
   created () {
     const uid = localStorage.getItem('uid')
     if (!uid) {
@@ -104,22 +148,6 @@ export default {
       }
 
     }
-  },
-  data () {
-    return {
-      wskey: "",
-      remarks: "",
-      timestamp: undefined,
-      status: 0
-    }
-  },
-  computed: {
-    statuss: function () {
-      return this.status == 0 ? 'check-circle' : 'close-circle'
-    },
-    color: function () {
-      return this.status == 0 ? '#52c41a' : '#eb2f96'
-    },
   }
 }
 </script>

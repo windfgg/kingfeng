@@ -11,28 +11,29 @@
       <div class="ant-card-body">
         <div class="text-center">
           <a-input
+            v-model="WsKey"
             class="magrin"
             type="text"
-            v-model="WsKey"
             style="text-align: center"
             placeholder="请输入wskey"
-          ></a-input>
+          />
           <br />
           <a-input
+            v-model="remarks"
             class="magrin"
             type="text"
-            v-model="remarks"
             placeholder="请输入备注"
             style="width: 60%; text-align: center"
-          ></a-input>
+          />
           <br />
           <a-button
             class="magrin"
             type="primary"
             shape="round"
             @click="CookiesCheck"
-            >登录</a-button
           >
+            登录
+          </a-button>
         </div>
       </div>
     </div>
@@ -42,6 +43,26 @@
 <script>
 import Notice from "../components/Notice.vue";
 export default {
+  components: {
+    Notice,
+  },
+  data () {
+    return {
+      WsKey: "",
+      remarks: "",
+    };
+  },
+  mounted () {
+  },
+  created () {
+    const uid = localStorage.getItem('uid')
+    const adminkey = localStorage.getItem('adminkey')
+    if (uid) {
+      this.$router.push('/index')
+    } else if (adminkey) {
+      this.$router.push('/admin')
+    }
+  },
   methods: {
     CookiesCheck () {
       const pin =
@@ -102,24 +123,6 @@ export default {
         });
       }
     },
-  },
-  created () {
-    const uid = localStorage.getItem('uid')
-    const adminkey = localStorage.getItem('adminkey')
-    if (uid) {
-      this.$router.push('/index')
-    } else if (adminkey) {
-      this.$router.push('/admin')
-    }
-  },
-  components: {
-    Notice,
-  },
-  data () {
-    return {
-      WsKey: "",
-      remarks: "",
-    };
   },
 };
 </script>
