@@ -50,7 +50,7 @@ NODE_ENV=production
 VUE_APP_PREVIEW=false
 #端口号
 PORT=5780
-#接口根地址
+#接口根地址 例如你的服务器地址是101.99.88.67的时候替换localhost即可
 VUE_APP_RootUrl=http://localhost:5000/
 ```
 <!-- ### 推送卡片
