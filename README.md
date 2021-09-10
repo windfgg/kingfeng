@@ -2,13 +2,13 @@
 
 技术栈 `vue 2` `asp.net core` `docker` 
 
-苹果捷径获取pinck: https://www.icloud.com/shortcuts/f6046f1e79ad4ee6bcca6d2b078bd25a
+[苹果捷径获取pinck](https://www.icloud.com/shortcuts/f6046f1e79ad4ee6bcca6d2b078bd25a)
 
 [docker image](https://hub.docker.com/r/ranqi03/kingfeng)
 
 ## 说明
 
-本项目使用后端OpenAPI 地址 端口号:http://localhost:5000/swagger/index.html
+本项目使用后端OpenAPI 地址:http://localhost:5000/swagger/index.html
 
 KingFeng 仅供学习参考使用，请于下载后的 24 小时内删除，本人不对使用过程中出现的任何问题负责，包括但不限于 `数据丢失` `数据泄露`。
 
@@ -23,8 +23,8 @@ KingFeng 仅支持 qinglong 2.9+
 - [x] 添加/更新cookies 添加备注 自动执行wskey任务
 - [x] 管理员登录 执行任务/任务日志查看
 - [x] 扫码推送卡片
+- [ ] 多容器添加ck
 - [ ] 环境变量导出/恢复
-- [ ] 登录页面自定义公告
 - [ ] 各种助力脚本执行
 - [ ] 自建推送日志数据库
 - [ ] 用户wskey管理
