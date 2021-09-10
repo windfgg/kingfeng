@@ -74,7 +74,7 @@ docker run -dit \
    --hostname kingfeng \
    ranqi03/kingfeng:latest
 
-wget https://github.com/QiFengg/kingfeng/releases/download/frontend/frontend.zip && unzip frontend.zip
+wget https://github.com/QiFengg/kingfeng/releases/download/frontend/dist.zip && unzip dist.zip
 
 cd ./dist && npm install && pm2 start
 
