@@ -14,8 +14,9 @@ KingFeng 仅支持 qinglong 2.9+
 
 [TG 频道](https://t.me/joinchat/H3etBWYzLKpiMWVl)    [TG 群组](https://t.me/joinchat/XV2AZcvzFIUxNjI9)
 ## 特性
+- [x] 支持wsck ptkey
 - [x] docker一键部署
-- [x] 添加/更新wskey 添加备注 自动执行wskey转换
+- [x] 添加/更新cookies 添加备注 自动执行wskey任务
 - [x] 管理员登录 执行任务/任务日志查看
 - [x] 扫码推送卡片
 - [ ] 环境变量导出/恢复
