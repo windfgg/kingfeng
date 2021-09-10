@@ -29,7 +29,7 @@ KingFeng 仅支持 qinglong 2.9+
 配置文件第一次部署后端会自动生成
 配置文件所有项必填 如不填(无法预知的后果)
 
-`backend`
+`backend` 地址为docker映射的目录下的config.yaml
 ```yaml
 #青龙地址 默认为空 必须以/结尾
 QL_URL: 
@@ -44,15 +44,7 @@ WsKeyTaskFullName: wskey转换
 # 首页的抓取wskey教程链接 默认 http://www.baidu.com
 Course: http://www.baidu.com
 ```
-`frontend` 
-```bash
-NODE_ENV=production
-VUE_APP_PREVIEW=false
-#端口号
-PORT=5780
-#接口根地址 例如你的服务器地址是101.99.88.67的时候替换localhost即可
-VUE_APP_RootUrl=http://localhost:5000/
-```
+
 <!-- ### 推送卡片
 
 自定义推送二维码：将 `push.jpg` 文件添加到 `/ql/kingfeng/static/` 目录下刷新网页即可。 -->
