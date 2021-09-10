@@ -41,16 +41,13 @@ QL_Client_ID:
 QL_Client_Secret: 
 #管理员密钥 第一次启动会自动生成 登录页面直接输入即可登录管理员
 SecretKey: 
-#wskey转cookie脚本全名称 如有重复 默认执行第一个
+#wskey定时任务的 任务名 
 WsKeyTaskFullName: wskey转换
 # 首页的抓取wskey教程链接 默认 http://www.baidu.com
 Course: http://www.baidu.com
+# 推送图片图床地址
+PushImageUrl:
 ```
-
-<!-- ### 推送卡片
-
-自定义推送二维码：将 `push.jpg` 文件添加到 `/ql/kingfeng/static/` 目录下刷新网页即可。 -->
-
 ### wskey转换库
 [Zy143L](https://github.com/Zy143L/wskey)
 
@@ -58,6 +55,9 @@ Course: http://www.baidu.com
 
 ## 项目指南
 有多种部署方法 请自行研究 下面只提供一种
+
+![KingFeng](https://i0.hdslb.com/bfs/album/d5e1df6f75e7835b699bdda295bbff4a4dce5a81.png)
+
 ```docker
 docker pull ranqi03/kingfeng:latest
 
@@ -68,6 +68,7 @@ docker run -dit \
    --hostname kingfeng \
    ranqi03/kingfeng:latest
 ```
-<!-- ## 注意事项 -->
+
+配置docker映射目录下的config.yaml
 
 <!-- ## 常见问题 -->
