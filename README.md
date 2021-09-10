@@ -13,18 +13,16 @@ KingFeng 仅支持 qinglong 2.9+
 不提供 `技术上的任何帮助`
 
 [TG 频道](https://t.me/joinchat/H3etBWYzLKpiMWVl)    [TG 群组](https://t.me/joinchat/XV2AZcvzFIUxNjI9)
-## 功能
-
-- [x] 添加/更新wskey 自动执行wskey转换
-- [x] 添加备注
+## 特性
+- [x] docker一键部署
+- [x] 添加/更新wskey 添加备注 自动执行wskey转换
 - [x] 管理员登录 执行任务/任务日志查看
-
-- [ ] 扫码推送卡片
+- [x] 扫码推送卡片
 - [ ] 环境变量导出/恢复
 - [ ] 登录页面自定义公告
 - [ ] 各种助力脚本执行
 - [ ] 自建推送日志数据库
-- [ ] 查看每个用户添加/修改wskey的日志并发送通知
+- [ ] 用户wskey管理
 
 ### 配置文件
 
