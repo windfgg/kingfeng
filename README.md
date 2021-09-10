@@ -6,6 +6,8 @@
 
 ## 说明
 
+本项目使用后端OpenAPI 地址 端口号:http://localhost:5000/swagger/index.html
+
 KingFeng 仅供学习参考使用，请于下载后的 24 小时内删除，本人不对使用过程中出现的任何问题负责，包括但不限于 `数据丢失` `数据泄露`。
 
 KingFeng 仅支持 qinglong 2.9+
@@ -14,8 +16,9 @@ KingFeng 仅支持 qinglong 2.9+
 
 [TG 频道](https://t.me/joinchat/H3etBWYzLKpiMWVl)    [TG 群组](https://t.me/joinchat/XV2AZcvzFIUxNjI9)
 ## 特性
+- [x] 支持wsck ptkey
 - [x] docker一键部署
-- [x] 添加/更新wskey 添加备注 自动执行wskey转换
+- [x] 添加/更新cookies 添加备注 自动执行wskey任务
 - [x] 管理员登录 执行任务/任务日志查看
 - [x] 扫码推送卡片
 - [ ] 环境变量导出/恢复
@@ -57,6 +60,8 @@ PushImageUrl:
 ![KingFeng](https://i0.hdslb.com/bfs/album/d5e1df6f75e7835b699bdda295bbff4a4dce5a81.png)
 
 ```docker
+docker kill kingfeng && docker rm kingfeng
+
 docker pull ranqi03/kingfeng:latest
 
 docker run -dit \
