@@ -58,6 +58,8 @@ PushImageUrl:
 ![KingFeng](https://i0.hdslb.com/bfs/album/d5e1df6f75e7835b699bdda295bbff4a4dce5a81.png)
 
 ```docker
+docker kill kingfeng && docker rm kingfeng
+
 docker pull ranqi03/kingfeng:latest
 
 docker run -dit \
