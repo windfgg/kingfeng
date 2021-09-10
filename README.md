@@ -2,7 +2,7 @@
 
 技术栈 `vue 2` `asp.net core` `docker` 
 
-苹果捷径获取pinck:https://www.icloud.com/shortcuts/346fe222b3f142708e307576f0f5c4c4
+苹果捷径获取pinck: https://www.icloud.com/shortcuts/f6046f1e79ad4ee6bcca6d2b078bd25a
 
 [docker image](https://hub.docker.com/r/ranqi03/kingfeng)
 
