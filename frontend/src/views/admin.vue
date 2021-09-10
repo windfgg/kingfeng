@@ -13,7 +13,7 @@
           <a-input
             type="text"
             v-model="secretkey"
-            placeholder="请输入需要修改的SecretKey"
+            placeholder="请输入新的SecretKey"
           />
         </div>
         <br />
@@ -64,7 +64,7 @@
         <a-input
           v-model="taskName"
           type="text"
-          placeholder="请输入任务全名称"
+          placeholder="请输入任务名"
           style="width: 80%"
         />
 

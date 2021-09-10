@@ -11,11 +11,11 @@
       <div class="ant-card-body">
         <div class="text-center">
           <a-input
-            v-model="WsKey"
+            v-model="cookies"
             class="magrin"
             type="text"
             style="text-align: center"
-            placeholder="请输入wskey"
+            placeholder="请输入cookies"
           />
           <br />
           <a-input
@@ -48,7 +48,7 @@ export default {
   },
   data () {
     return {
-      WsKey: "",
+      cookies: "",
       remarks: "",
       config: {
         course: undefined,
@@ -87,13 +87,19 @@ export default {
   },
   methods: {
     CookiesCheck () {
-      //判断格式
+      //判断wskey格式
       const pin =
-        this.WsKey.match(/pin=(.*?);/) && this.WsKey.match(/pin=(.*?);/)[1];
+        this.cookies.match(/pin=(.*?);/) && this.cookies.match(/pin=(.*?);/)[1];
       pin == decodeURIComponent(pin);
       const wskey =
-        this.WsKey.match(/wskey=(.*?);/) && this.WsKey.match(/wskey=(.*?);/)[1];
-      if (pin && wskey) {
+        this.cookies.match(/wskey=(.*?);/) && this.cookies.match(/wskey=(.*?);/)[1];
+      //判断pin格式
+      const pt_key =
+        this.cookies.match(/pt_key=(.*?);/) && this.cookies.match(/pt_key=(.*?);/)[1];
+      pin == decodeURIComponent(pin);
+      const pt_pin =
+        this.cookies.match(/pt_pin=(.*?);/) && this.cookies.match(/pt_pin=(.*?);/)[1];
+      if (pin && wskey) { //判断wskey
         if (this.remarks == '') {
           this.$message.error("备注不能为空", 1.5);
           return
@@ -103,14 +109,14 @@ export default {
             return
           }
         }
-        var json = [
+        var WSCK = [
           {
             name: "JD_WSCK",
-            value: this.WsKey,
+            value: this.cookies,
             remarks: this.remarks,
           },
         ];
-        this.$http.post("api/env", json).then((response) => {
+        this.$http.post("api/env", WSCK).then((response) => {
           if (response.data.code === 200) {
             //console.log(response.data.data._id[0]);
             localStorage.setItem("uid", response.data.data._id[0]);
@@ -128,13 +134,40 @@ export default {
 
           this.$message.error(response.data.msg, 1.5);
         });
-        //var data = request.env("JD_WSCK", this.WsKey, "r:" + pin + ";");
-        //console.log(data);
-      } else {
-        //判断是否为管理员
-        this.$http.get("api/admin?key=" + this.WsKey).then((response) => {
+      } else if (pt_key && pt_pin) {//判断是否pinkey
+        if (this.remarks.length == '') {
+          this.remarks = pt_pin
+        }
+
+        var PTCK = [
+          {
+            name: "JD_COOKIE",
+            value: this.cookies,
+            remarks: this.remarks,
+          },
+        ];
+        this.$http.post("api/env", PTCK).then((response) => {
           if (response.data.code === 200) {
-            localStorage.setItem("adminkey", this.WsKey);
+            localStorage.setItem("uid", response.data.data._id[0]);
+            localStorage.setItem("name", this.remarks);
+
+            setTimeout(() => {
+              this.$router.push({
+                name: "Index", params: { push: this.push }
+              });
+            }, 1000)
+
+            this.$message.success("欢迎回来 " + this.remarks, 2);
+          } else {
+            this.$message.error(response.data.msg, 1.5);
+          }
+        }, (response) => {
+          this.$message.error(response.data.msg, 1.5);
+        });
+      } else { //判断是否为管理员
+        this.$http.get("api/admin?key=" + this.cookies).then((response) => {
+          if (response.data.code === 200) {
+            localStorage.setItem("adminkey", this.cookies);
             setTimeout(() => {
               this.$router.push({
                 name: "Admin"
@@ -143,7 +176,7 @@ export default {
             }, 1000)
             this.$message.success("管理员 欢迎回来 ", 2);
           } else {
-            this.$message.error("wskey 解析失败，请检查格式后重试！", 1.5);
+            this.$message.error("服务端错误,请检查服务端日志！", 1.5);
           }
         }, (response) => {
           response
