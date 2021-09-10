@@ -75,8 +75,9 @@ docker run -dit \
    --name kingfeng \
    --hostname kingfeng \
    ranqi03/kingfeng:latest
-
+```
 #### 前端
+```bash
 国内用户：wget https://ghproxy.com/https://github.com/QiFengg/kingfeng/releases/download/frontend/dist.zip && unzip dist.zip
 国外用户：wget https://github.com/QiFengg/kingfeng/releases/download/frontend/dist.zip && unzip dist.zip
 
