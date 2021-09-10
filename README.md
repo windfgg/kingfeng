@@ -2,8 +2,6 @@
 
 技术栈 `vue 2` `asp.net core` `docker` 
 
-[苹果捷径获取pinck](https://www.icloud.com/shortcuts/f6046f1e79ad4ee6bcca6d2b078bd25a)
-
 [docker image](https://hub.docker.com/r/ranqi03/kingfeng)
 
 ## 说明
@@ -18,16 +16,18 @@ KingFeng 仅支持 qinglong 2.9+
 
 [TG 频道](https://t.me/joinchat/H3etBWYzLKpiMWVl)    [TG 群组](https://t.me/joinchat/XV2AZcvzFIUxNjI9)
 ## 特性
-- [x] 支持wsck ptkey
 - [x] docker一键部署
-- [x] 添加/更新cookies 添加备注 自动执行wskey任务
+- [x] 支持wsck ptkey
+- [x] 用户添加/更新cookies 添加备注 推送卡片
 - [x] 管理员登录 执行任务/任务日志查看
-- [x] 扫码推送卡片
 - [ ] 多容器添加ck
 - [ ] 环境变量导出/恢复
 - [ ] 各种助力脚本执行
 - [ ] 自建推送日志数据库
 - [ ] 用户wskey管理
+
+### 插件
+[苹果捷径获取pinck](https://www.icloud.com/shortcuts/f6046f1e79ad4ee6bcca6d2b078bd25a)
 
 ### 配置文件
 
@@ -59,8 +59,22 @@ PushImageUrl:
 ## 项目指南
 有多种部署方法 请自行研究 下面只提供一种
 
+### 第一次部署
 ![KingFeng](https://i0.hdslb.com/bfs/album/d5e1df6f75e7835b699bdda295bbff4a4dce5a81.png)
 
+```docker
+docker pull ranqi03/kingfeng:latest
+
+docker run -dit \
+   -v $PWD/kingfeng/:/app/config/ \
+   -p 5000:80 \
+   --name kingfeng \
+   --hostname kingfeng \
+   ranqi03/kingfeng:latest
+```
+配置docker映射目录下的config.yaml
+
+### 更新
 ```docker
 docker kill kingfeng && docker rm kingfeng
 
@@ -73,7 +87,4 @@ docker run -dit \
    --hostname kingfeng \
    ranqi03/kingfeng:latest
 ```
-
-配置docker映射目录下的config.yaml
-
 <!-- ## 常见问题 -->
