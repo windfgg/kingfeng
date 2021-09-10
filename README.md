@@ -2,6 +2,8 @@
 
 技术栈 `vue 2` `asp.net core` `docker` 
 
+[docker image](https://hub.docker.com/r/ranqi03/kingfeng)
+
 ## 说明
 
 KingFeng 仅供学习参考使用，请于下载后的 24 小时内删除，本人不对使用过程中出现的任何问题负责，包括但不限于 `数据丢失` `数据泄露`。
