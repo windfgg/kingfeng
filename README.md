@@ -58,8 +58,7 @@ Course: http://www.baidu.com
 
 ## 项目指南
 有多种部署方法 请自行研究 下面只提供一种
-```bash
-
+```docker
 docker pull ranqi03/kingfeng:latest
 
 docker run -dit \
