@@ -82,7 +82,7 @@ export default {
             remarks: "r=" + this.remarks + ";",
           },
         ];
-        this.$http.post(this.$request_url + "api/env", json).then((response) => {
+        this.$http.post("api/env", json).then((response) => {
           if (response.data.code === 200) {
             //console.log(response.data.data._id[0]);
             localStorage.setItem("uid", response.data.data._id[0]);
@@ -104,7 +104,7 @@ export default {
         //console.log(data);
       } else {
         //判断是否为管理员
-        this.$http.get(this.$request_url + "api/admin?key=" + this.WsKey).then((response) => {
+        this.$http.get("api/admin?key=" + this.WsKey).then((response) => {
           if (response.data.code === 200) {
             localStorage.setItem("adminkey", this.WsKey);
             setTimeout(() => {

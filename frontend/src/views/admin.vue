@@ -138,7 +138,7 @@ export default {
     task () {
       // const taksName = ;
       // const adminkey = ;
-      this.$http.put(por + "api/task?taskName=" + this.taskName + "&key=" + this.adminkey).then((response) => {
+      this.$http.put("api/task?taskName=" + this.taskName + "&key=" + this.adminkey).then((response) => {
         if (response.data.code === 200) {
           this.$message.success(this.taskName + "执行成功", 1.5);
           clearInterval(this.timer) // 清除定时器
@@ -151,7 +151,7 @@ export default {
     //wskye任务
     wskeytask () {
       this.taskName = ''
-      this.$http.put(this.$request_url + "api/task?taskName=" + 'ws' + "&key=" + this.adminkey).then((response) => {
+      this.$http.put("api/task?taskName=" + 'ws' + "&key=" + this.adminkey).then((response) => {
         if (response.data.code === 200) {
           this.$message.success("执行wskey转换成功", 1.5);
           clearInterval(this.timer) // 清除定时器

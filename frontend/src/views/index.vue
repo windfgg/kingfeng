@@ -4,51 +4,31 @@
     <div class="Card ant-card ant-card-bordered">
       <div class="ant-card-head">
         <div class="ant-card-head-wrapper">
-          <a-icon
-            type="crown"
-            theme="twoTone"
-          />
-          <div class="ant-card-head-title">
-            个人中心
-          </div>
+          <a-icon type="crown" theme="twoTone" />
+          <div class="ant-card-head-title">个人中心</div>
         </div>
       </div>
       <div class="ant-card-body">
-        <br>
+        <br />
         <div>
           <p>昵称：{{ remarks }}</p>
           <!-- <p>更新时间：{{ timestamp }}</p> -->
           <p>
             状态：
-            <a-icon
-              :type="statuss"
-              theme="twoTone"
-              :two-tone-color="color"
-            />{{
+            <a-icon :type="statuss" theme="twoTone" :two-tone-color="color" />{{
               status == 0 ? " 正常" : " 异常"
             }}
           </p>
         </div>
-        <br>
-        <a-input
-          v-model="wskey"
-          placeholder="请输入新的wskey"
-        />
+        <br />
+        <a-input v-model="wskey" placeholder="请输入新的wskey" />
         <div>
-          <br>
+          <br />
           <a-space>
-            <a-button
-              type="primary"
-              shape="round"
-              @click="updatewskey"
-            >
+            <a-button type="primary" shape="round" @click="updatewskey">
               更新wskey
             </a-button>
-            <a-button
-              type="danger"
-              shape="round"
-              @click="logout"
-            >
+            <a-button type="danger" shape="round" @click="logout">
               退出登录
             </a-button>
             <!-- <a-button type="danger" shape="round" @click="remove"
@@ -62,20 +42,12 @@
     <div class="Card ant-card ant-card-bordered">
       <div class="ant-card-head">
         <div class="ant-card-head-wrapper">
-          <a-icon
-            type="pushpin"
-            theme="twoTone"
-          />
-          <div class="ant-card-head-title">
-            扫码接收通知
-          </div>
+          <a-icon type="pushpin" theme="twoTone" />
+          <div class="ant-card-head-title">扫码接收通知</div>
         </div>
       </div>
       <div class="ant-card-body">
-        <img
-          class="img"
-          :src="require('../assets/' + 'push.png')"
-        >
+        <img class="img" :src="require('../assets/' + 'push.png')" />
       </div>
     </div>
   </div>
@@ -104,7 +76,7 @@ export default {
     if (!uid) {
       this.$router.push('/')
     } else {
-      this.$http.get(this.$request_url + "api/exitst?uid=" + uid).then((response) => {
+      this.$http.get("api/exitst?uid=" + uid).then((response) => {
         if (response.data.code === 200) {
           this.remarks = localStorage.getItem('name')
           //this.$message.success("欢迎回来", 1.5);
@@ -135,7 +107,7 @@ export default {
       const wskey =
         this.wskey.match(/wskey=(.*?);/) && this.wskey.match(/wskey=(.*?);/)[1];
       if (pin && wskey) {
-        this.$http.post(this.$request_url + 'api/updateEnv?uid=' + localStorage.getItem('uid') + '&wskey=' + this.wskey).then(response => {
+        this.$http.post('api/updateEnv?uid=' + localStorage.getItem('uid') + '&wskey=' + this.wskey).then(response => {
           if (response.data.code == 200) {
             this.wskey = ''
             this.$message.success('更新wskey成功', 2)

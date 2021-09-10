@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Rewrite;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -32,8 +33,7 @@ namespace KingFeng
 
 
             //配置Controllers全部由AutoFac创建
-            //services.AddControllersWithViews().AddControllersAsServices();
-
+            //services.AddControllersWithViews().AddControllersAsServices()
 
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             //AddSingleton的生命周期：项目启动 - 项目关闭   相当于静态类 只会有一个
@@ -99,6 +99,8 @@ namespace KingFeng
             app.UseRouting();
 
             app.UseAuthorization();
+
+            app.UseFileServer();
 
             app.UseEndpoints(endpoints =>
             {

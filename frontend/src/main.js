@@ -16,11 +16,11 @@ components.forEach((component) => {
   Vue.component(component.name, component);
 });
 
-// console.log(process.env); 环境变量
+//console.log(process.env);
+//环境变量;
 // console.log(Vue.prototype.$request_url);
-
 Vue.prototype.$message = message; //类似于this.$message这种方法的调用，需要Vue的原型上添加对象方法
-Vue.prototype.$request_url = process.env.VUE_APP_RootUrl; //Vue的原型上添加对象
+//Vue.prototype.$request_url = process.env.VUE_APP_RootUrl; //测试接口地址
 
 new Vue({
   render: (h) => h(App),

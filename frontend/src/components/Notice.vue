@@ -30,7 +30,7 @@ export default {
   created () {
   },
   mounted () {
-    this.$http.get(this.$request_url + 'api/config').then(response => {
+    this.$http.get('api/config').then(response => {
       this.p4 = response.data.data
       if (response.status === 0) {
         response

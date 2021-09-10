@@ -1,3 +1,3 @@
 module.exports = {
-  outputDir: './dist/public'
+  outputDir: "../backend/KingFeng/wwwroot",
 };

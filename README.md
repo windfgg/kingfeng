@@ -63,8 +63,7 @@ VUE_APP_RootUrl=http://localhost:5000/
 请按照使用文档正确拉取 wskey转换库
 
 ## 项目指南
-
-#### 后端
+有多种部署方法 请自行研究 下面只提供一种
 ```bash
 
 docker pull ranqi03/kingfeng:latest
@@ -75,17 +74,6 @@ docker run -dit \
    --name kingfeng \
    --hostname kingfeng \
    ranqi03/kingfeng:latest
-```
-#### 前端
-```bash
-国内用户：wget https://ghproxy.com/https://github.com/QiFengg/kingfeng/releases/download/frontend/dist.zip && unzip dist.zip
-国外用户：wget https://github.com/QiFengg/kingfeng/releases/download/frontend/dist.zip && unzip dist.zip
-
-cd ./dist && npm install && pm2 start
-
-pm2 restart kingfeng
-
-pm2 stop kingfeng
 ```
 <!-- ## 注意事项 -->
 
