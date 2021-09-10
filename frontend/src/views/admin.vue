@@ -9,15 +9,19 @@
         </div>
       </div>
       <div class="ant-card-body">
-        <!-- <div>
-          <a-input type="text" placeholder="请输入需要修改的SecretKey" />
-        </div> -->
+        <div>
+          <a-input
+            type="text"
+            v-model="secretkey"
+            placeholder="请输入需要修改的SecretKey"
+          />
+        </div>
         <br />
         <div>
           <a-space size="large">
-            <!-- <a-button type="primary" shape="round" @click="logout"
+            <a-button type="primary" shape="round" @click="updateadminkey"
               >修改SecretKey
-            </a-button> -->
+            </a-button>
             <a-button type="danger" shape="round" @click="logout">
               退出登录
             </a-button>
@@ -105,18 +109,19 @@ export default {
       taskName: "",
       logs: undefined,
       adminkey: "",
-      timer: undefined
+      timer: undefined,
+      secretkey: ""
     }
   },
   //窗体刚创建没渲染时候
   created () {
     const adminkey = localStorage.getItem('adminkey')
     if (adminkey) {
-      this.$http.get(this.$config.url + "api/admin?key=" + adminkey).then((response) => {
+      this.$http.get("api/admin?key=" + adminkey).then((response) => {
         if (response.data.code === 200) {
           //this.$message.success("欢迎回来", 1.5);
         } else {
-          this.$message.error("登录已过期,请重新登录", 2);
+          this.$message.error("SecretKey已被更改,请重新登录", 2);
           localStorage.removeItem('adminkey');
           this.$router.push('/')
         }
@@ -128,6 +133,9 @@ export default {
   //渲染过后
   mounted () {
     this.adminkey = localStorage.getItem('adminkey')
+
+
+    document.title = 'KingFeng - 管理员'
   },
   //销毁之前
   beforeDestroy () {
@@ -166,7 +174,7 @@ export default {
     readLog () {
       console.log('执行一次')
       var task = this.taskName == '' ? 'ws' : this.taskName
-      this.$http.get(this.$request_url + "api/log?taskName=" + task + "&key=" + this.adminkey).then((response) => {
+      this.$http.get("api/log?taskName=" + task + "&key=" + this.adminkey).then((response) => {
         if (response.data.code === 200) {
           if (response.data.data.indexOf('执行结束') != -1) {
             this.logs = response.data.data;
@@ -193,6 +201,18 @@ export default {
       setTimeout(() => {
         this.$router.push('/')
       }, 1000)
+    },
+    //修改adminkey
+    updateadminkey () {
+      this.$http.put('api/updateSecretKey?oldkey=' + localStorage.getItem('adminkey') + '&newkey=' + this.secretkey).then(response => {
+        if (response.data.code == 200) {
+          this.$message.success(response.data.msg + ' 请重新登录', 1.5)
+          localStorage.removeItem('adminkey');
+          this.$router.push('/')
+        } else if (response.data.code == 400) {
+          this.$message.error(response.data.msg, 1.5)
+        }
+      })
     }
   },
 }

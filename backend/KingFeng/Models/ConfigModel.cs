@@ -18,5 +18,7 @@ namespace KingFeng.Models
         public string WsKeyTaskFullName { get; set; }
 
         public string Course { get; set; }
+
+        public string PushImageUrl { get; set; }
     }
 }

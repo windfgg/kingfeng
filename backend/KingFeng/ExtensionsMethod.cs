@@ -6,6 +6,7 @@ using System.Data;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using YamlDotNet.Serialization;
 using YamlDotNet.Serialization.NamingConventions;
@@ -56,6 +57,19 @@ namespace KingFeng
         {
             TimeSpan ts = DateTime.UtcNow - new DateTime(1970, 1, 1, 0, 0, 0, 0);
             return Convert.ToInt64(ts.TotalSeconds).ToString();
+        }
+
+        public static bool PasswordIsMathch(this string str)
+        {
+            var regex = new Regex(@"
+    (?=.*[0-9])                     #必须包含数字
+    (?=.*[a-zA-Z])                  #必须包含小写或大写字母
+    (?=([\x21-\x7e]+)[^a-zA-Z0-9])  #必须包含特殊符号
+    .{6,15}                         #至少6个字符，最多30个字符
+    ", RegexOptions.Multiline | RegexOptions.IgnorePatternWhitespace);
+
+            //校验密码是否符合
+            return regex.IsMatch(str);
         }
     }
 

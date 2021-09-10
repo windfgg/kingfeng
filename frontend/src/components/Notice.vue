@@ -11,44 +11,49 @@
         <p>{{ p1 }}</p>
         <p>{{ p2 }}</p>
         <p>{{ p3 }}</p>
-        <a @click="open()">手机以及电脑抓取Cookies教程</a>
+        <div style="display：inline;">
+          本项目在
+          <a @click="open('https://github.com/QiFengg/kingfeng')">Github</a>
+          和
+          <a @click="open('https://github.com/QiFengg/kingfeng')">TG频道</a>
+          进行分发✨
+        </div>
       </div>
+      <br />
+      <a :src="course" @click="open(this.course)"
+        >手机以及电脑抓取Cookies教程</a
+      >
     </div>
   </div>
 </template>
 
 <script>
 export default {
+  props: ["course"],
   data () {
     return {
       p1: "请关闭免密支付以及打开支付验密",
       p2: "建议微信绑定账户以保证提现能到账",
       p3: "需手动抓取Cookies 教程请点击下面链接获取",
-      p4: undefined,
+      tg: ""
     };
   },
   created () {
   },
   mounted () {
-    this.$http.get('api/config').then(response => {
-      this.p4 = response.data.data
-      if (response.status === 0) {
-        response
-      }
-    }, (response) => {
-      response
-      this.$message.error("请求服务端失败,请检查设置", 2);
-    })
   },
   methods: {
-    open () {
-      window.open(this.p4, '_blank') // 新窗口打开外链接
+    open (link) {
+      window.open(link, '_blank') // 新窗口打开外链接
     }
   },
 };
 </script>
 
 <style>
+.line {
+  display: inline-block;
+}
 .Card {
   margin: auto;
   margin-top: 1.25rem;

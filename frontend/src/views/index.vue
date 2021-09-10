@@ -12,11 +12,11 @@
         <br />
         <div>
           <p>昵称：{{ remarks }}</p>
-          <!-- <p>更新时间：{{ timestamp }}</p> -->
+          <p>更新时间：{{ timestamp }}</p>
           <p>
             状态：
             <a-icon :type="statuss" theme="twoTone" :two-tone-color="color" />{{
-              status == 0 ? " 正常" : " 异常"
+              status == 0 ? " 正常" : " 被禁用"
             }}
           </p>
         </div>
@@ -31,8 +31,9 @@
             <a-button type="danger" shape="round" @click="logout">
               退出登录
             </a-button>
-            <!-- <a-button type="danger" shape="round" @click="remove"
-              >删除账号</a-button -->
+            <a-button type="danger" shape="round" @click="remove">
+              删除账号
+            </a-button>
           </a-space>
         </div>
       </div>
@@ -47,7 +48,7 @@
         </div>
       </div>
       <div class="ant-card-body">
-        <img class="img" :src="require('../assets/' + 'push.png')" />
+        <img class="img" :src="push" />
       </div>
     </div>
   </div>
@@ -57,6 +58,7 @@
 export default {
   data () {
     return {
+      push: "",
       wskey: "",
       remarks: "",
       timestamp: undefined,
@@ -75,20 +77,48 @@ export default {
     const uid = localStorage.getItem('uid')
     if (!uid) {
       this.$router.push('/')
-    } else {
-      this.$http.get("api/exitst?uid=" + uid).then((response) => {
-        if (response.data.code === 200) {
-          this.remarks = localStorage.getItem('name')
-          //this.$message.success("欢迎回来", 1.5);
-        } else {
-          this.$message.error("登录已过期,请重新登录", 2);
-          localStorage.removeItem('uid');
-          this.$router.push('/')
-        }
-      })
     }
   },
+  mounted () {
+    this.push = localStorage.getItem('push')
+    const uid = localStorage.getItem('uid')
+    this.$http.get("api/exitst?uid=" + uid).then((response) => {
+      if (response.data.code === 200) {
+        const time = response.data.msg
+        this.remarks = localStorage.getItem('name')
+        this.timestamp = this.dateFormat(time)
+
+        if (!response.data.data) {//如果被禁用 更改状态
+          this.status = 1
+          this.$message.error("用户被管理员禁用,请联系管理员处理", 3);
+        }
+      } else {
+        this.$message.error("用户被删除,请联系管理员处理", 3);
+        localStorage.removeItem('uid')
+        this.$router.push('/')
+      }
+    })
+    document.title = 'KingFeng - 个人中心'
+  },
   methods: {
+    //时间转换
+    dateFormat (date) {
+      let data = new Date(date)
+      let y = data.getFullYear()
+      let m = data.getMonth() + 1
+      m = m < 10 ? ('0' + m) : m
+      let d = data.getDate()
+      d = d < 10 ? ('0' + d) : d
+      let h = data.getHours()
+      h = h < 10 ? ('0' + h) : h
+      let M = data.getMinutes()
+      M = M < 10 ? ('0' + M) : M
+      let s = data.getSeconds()
+      s = s < 10 ? ('0' + s) : s
+      let dateTime = y + '-' + m + '-' + d + ' ' + h + ':' + M + ':' + s;
+      return dateTime;
+    },
+    //退出
     logout () {
       localStorage.removeItem('uid');
       clearInterval(this.timer) // 清除定时器
@@ -97,9 +127,21 @@ export default {
         this.$router.push('/')
       }, 1000)
     },
+    //删除账号
     remove () {
-
+      const uid = localStorage.getItem('uid')
+      this.$http.delete('api/deleteEnv?uid=' + uid).then(response => {
+        if (response.data.code == 200) {
+          localStorage.removeItem('uid');
+          this.$message.success('删除账号成功', 2)
+          this.$router.push('/')
+          localStorage.removeItem('name');
+        } else {
+          this.$message.error('删除失败,请联系管理员处理')
+        }
+      })
     },
+    //更新环境变量
     updatewskey () {
       const pin =
         this.wskey.match(/pin=(.*?);/) && this.wskey.match(/pin=(.*?);/)[1];
@@ -131,8 +173,8 @@ export default {
   max-width: 64rem;
 }
 .img {
-  margin: 0px;
-  width: auto;
+  border: 0px solid;
+  width: 100%;
   height: 300px;
 }
 .Card {

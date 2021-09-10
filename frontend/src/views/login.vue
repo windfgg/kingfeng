@@ -1,6 +1,6 @@
 <template>
   <div class="content">
-    <Notice class="Card ant-card ant-card-bordered" />
+    <Notice class="Card ant-card ant-card-bordered" :course="config.course" />
     <div class="Card ant-card ant-card-bordered">
       <div class="ant-card-head">
         <div class="ant-card-head-wrapper">
@@ -50,9 +50,31 @@ export default {
     return {
       WsKey: "",
       remarks: "",
+      config: {
+        course: undefined,
+        push: undefined,
+      }
     };
   },
   mounted () {
+    console.log('本项目在 github:https://github.com/QiFengg/kingfeng 进行分发 喜欢的话麻烦给个start 谢谢~')
+    console.log('By:qifeng https://github.com/QiFengg')
+
+    document.title = 'KingFeng - 登录页面'
+
+    this.$http.get('api/config').then(response => {
+      if (response.data.code === 200) {
+        this.config.course = response.data.data.course
+        this.config.push = response.data.data.push
+
+        if (this.config.push != localStorage.getItem('push')) {
+          localStorage.setItem('push', this.config.push)
+        }
+      }
+    }, (response) => {
+      response
+      this.$message.error("获取服务端配置失败,请检查配置文件", 2);
+    })
   },
   created () {
     const uid = localStorage.getItem('uid')
@@ -65,6 +87,7 @@ export default {
   },
   methods: {
     CookiesCheck () {
+      //判断格式
       const pin =
         this.WsKey.match(/pin=(.*?);/) && this.WsKey.match(/pin=(.*?);/)[1];
       pin == decodeURIComponent(pin);
@@ -74,12 +97,17 @@ export default {
         if (this.remarks == '') {
           this.$message.error("备注不能为空", 1.5);
           return
+        } else {
+          if (this.remarks.length < 3) {
+            this.$message.error("备注不能少于三个字", 1.5);
+            return
+          }
         }
         var json = [
           {
             name: "JD_WSCK",
             value: this.WsKey,
-            remarks: "r=" + this.remarks + ";",
+            remarks: this.remarks,
           },
         ];
         this.$http.post("api/env", json).then((response) => {
@@ -88,17 +116,17 @@ export default {
             localStorage.setItem("uid", response.data.data._id[0]);
             setTimeout(() => {
               this.$router.push({
-                name: "Index"
+                name: "Index", params: { push: this.push }
               });
             }, 1000)
             localStorage.setItem("name", this.remarks);
             this.$message.success("欢迎回来 " + this.remarks, 2);
           } else {
-            this.$message.error("请求服务器失败，请检查服务端后重试！", 1.5);
+            this.$message.error(response.data.msg, 1.5);
           }
         }, (response) => {
-          response
-          this.$message.error("请求服务器失败，请检查服务端后重试！", 1.5);
+
+          this.$message.error(response.data.msg, 1.5);
         });
         //var data = request.env("JD_WSCK", this.WsKey, "r:" + pin + ";");
         //console.log(data);
@@ -119,7 +147,7 @@ export default {
           }
         }, (response) => {
           response
-          this.$message.error("请求服务器失败，请检查服务端后重试！", 1.5);
+          this.$message.error(response.data.msg, 2);
         });
       }
     },

@@ -10,19 +10,10 @@ namespace KingFeng.Services
 {
     public interface IConfigServices
     {
-        string QL_URL { get;}
+        public ConfigModel config { get; set; }
 
-        string QL_Client_ID { get; }
-
-        string QL_Client_Secret { get;}
-
-        public string SecretKey { get; set; }
-
-        public string WsKeyTaskFullName { get; set; }
-
-        public string Course { get; set; }
-
-        void getConfig();
+        void ReadConfig();
+        void UpdateConfig(ConfigModel config);
     }
 
     public class ConfigServices: IConfigServices
@@ -33,33 +24,16 @@ namespace KingFeng.Services
         {
             _logger = logger;
 
-            getConfig();
+            ReadConfig();
         }
 
-        public string QL_URL { get; set; }
+        public ConfigModel config { get; set; }
 
-        public string QL_Client_ID { get ; set; }
-
-        public string QL_Client_Secret { get ; set; }
-
-        public string SecretKey { get; set; }
-
-        public string Course { get; set; }
-
-        public string WsKeyTaskFullName { get; set; }
-
-        public void getConfig()
+        public void ReadConfig()
         {
             try
             {
-                var Model = File.ReadAllText(Program.ConfigPath).YamlTo<ConfigModel>();
-
-                QL_URL = Model.QL_URL;
-                QL_Client_ID = Model.QL_Client_ID;
-                QL_Client_Secret = Model.QL_Client_Secret;
-                SecretKey=Model.SecretKey;
-                WsKeyTaskFullName = Model.WsKeyTaskFullName;
-                Course = Model.Course; 
+                config = File.ReadAllText(Program.ConfigPath).YamlTo<ConfigModel>();
 
                 //_logger.LogInformation(Model.ToJson());
             }
@@ -68,6 +42,11 @@ namespace KingFeng.Services
                 _logger.LogError("请检查配置文件格式是否正确");
                 _logger.LogError(ex.Message);
             }
+        }
+
+        public void UpdateConfig(ConfigModel config)
+        {
+            File.WriteAllText(Program.ConfigPath, config.Toyaml());
         }
     }
 }

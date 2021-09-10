@@ -29,9 +29,9 @@ namespace KingFeng.Models
 
         public string remarks { get; set; }
 
-        //public bool status { get; set; }
+        public bool status { get; set; }
 
-        //public DateTime timestamp { get; set; }
+        public string timestamp { get; set; }
 
         [Required]
         public string value { get; set; }
