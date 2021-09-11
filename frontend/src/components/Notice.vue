@@ -20,27 +20,42 @@
         </div>
       </div>
       <br />
-      <a :src="course" @click="open(this.course)"
-        >手机以及电脑抓取Cookies教程</a
-      >
+      <div>{{ notice }}</div>
+      <br />
+      <a :src="course" @click="open(course)">手机以及电脑抓取Cookies教程</a>
+      <br />
     </div>
   </div>
 </template>
 
 <script>
 export default {
-  props: ["course"],
   data () {
     return {
       p1: "请关闭免密支付以及打开支付验密",
       p2: "建议微信绑定账户以保证提现能到账",
       p3: "需手动抓取Cookies 教程请点击下面链接获取",
-      tg: ""
+      tg: "",
+      course: undefined,
+      notice: undefined
     };
   },
-  created () {
-  },
   mounted () {
+    //获取配置文件
+    this.$http.get('api/config').then(response => {
+      if (response.data.code === 200) {
+        this.course = response.data.data.course
+        this.notice = response.data.data.notice
+        var push = localStorage.getItem('push')
+        if (push != response.data.data.push) {
+          localStorage.setItem('push', response.data.data.push)
+        }
+      }
+    }, (response) => {
+      response
+      this.$message.error("获取服务端配置失败,请检查配置文件", 2);
+      return
+    })
   },
   methods: {
     open (link) {

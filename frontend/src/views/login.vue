@@ -1,6 +1,7 @@
 <template>
   <div class="content">
-    <Notice class="Card ant-card ant-card-bordered" :course="config.course" />
+    <Notice class="Card ant-card ant-card-bordered" />
+
     <div class="Card ant-card ant-card-bordered">
       <div class="ant-card-head">
         <div class="ant-card-head-wrapper">
@@ -10,6 +11,27 @@
       </div>
       <div class="ant-card-body">
         <div class="text-center">
+          <div>
+            <a-select
+              default-value="lucy"
+              style="width: 120px"
+              @change="handleChange"
+            >
+              <a-select-option value="jack"> Jack </a-select-option>
+              <a-select-option value="lucy"> Lucy </a-select-option>
+              <a-select-option value="disabled" disabled>
+                Disabled
+              </a-select-option>
+              <a-select-option value="Yiminghe"> yiminghe </a-select-option>
+            </a-select>
+            <a-select default-value="lucy" style="width: 120px" disabled>
+              <a-select-option value="lucy"> Lucy </a-select-option>
+            </a-select>
+            <a-select default-value="lucy" style="width: 120px" loading>
+              <a-select-option value="lucy"> Lucy </a-select-option>
+            </a-select>
+          </div>
+          <br />
           <a-input
             v-model="cookies"
             class="magrin"
@@ -53,30 +75,17 @@ export default {
       config: {
         course: undefined,
         push: undefined,
+        notice: undefined
       }
     };
   },
   mounted () {
     console.log('本项目在 github:https://github.com/QiFengg/kingfeng 进行分发 喜欢的话麻烦给个start 谢谢~')
     console.log('By:qifeng https://github.com/QiFengg')
-
-    document.title = 'KingFeng - 登录页面'
-
-    this.$http.get('api/config').then(response => {
-      if (response.data.code === 200) {
-        this.config.course = response.data.data.course
-        this.config.push = response.data.data.push
-
-        if (this.config.push != localStorage.getItem('push')) {
-          localStorage.setItem('push', this.config.push)
-        }
-      }
-    }, (response) => {
-      response
-      this.$message.error("获取服务端配置失败,请检查配置文件", 2);
-    })
   },
   created () {
+    document.title = 'KingFeng - 登录页面'
+
     const uid = localStorage.getItem('uid')
     const adminkey = localStorage.getItem('adminkey')
     if (uid) {

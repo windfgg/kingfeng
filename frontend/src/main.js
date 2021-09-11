@@ -3,18 +3,33 @@ import Vue from "vue";
 import App from "./App.vue";
 import VueResource from "vue-resource";
 import router from "./router";
-import { Button, Icon, Card, Input, message, Space } from "ant-design-vue"; //引入Ant-Desgin
-
-//import router from "./router";
-
-Vue.config.productionTip = false; //关闭生产提示
-
-const components = [Button, Icon, Card, Input, Input.TextArea, Space];
+import {
+  Button,
+  Icon,
+  Card,
+  Input,
+  message,
+  Space,
+  Select,
+} from "ant-design-vue"; //引入Ant-Desgin
+const components = [
+  Button,
+  Icon,
+  Card,
+  Input,
+  Input.TextArea,
+  Space,
+  Select.Option,
+];
 Vue.use(VueResource);
 
 components.forEach((component) => {
   Vue.component(component.name, component);
 });
+
+//import router from "./router";
+
+Vue.config.productionTip = false; //关闭生产提示
 
 //console.log(process.env);
 //环境变量;

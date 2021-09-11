@@ -18,6 +18,28 @@ namespace KingFeng
     public class Program
     {
         public static string ConfigPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory,"config", "config.yaml");
+        public static string InitConfig()
+        {
+            var servers = new List<ConfigItemModel>();
+            servers.Add(new ConfigItemModel()
+            {
+                QL_URL = "http://localhost:5700/",
+                QL_Client_ID = "123",
+                QL_Client_Secret = "123",
+                MaxCount = 100,
+                QL_Name = "广州节点"
+            });
+            var config = new KingFeng.Models.ConfigModel()
+            {
+                PushImageUrl = "https://img2.baidu.com/it/u=1007188585,453085648&fm=26&fmt=auto&gp=0.jpg",
+                Notice = "你好,这里可以自定义公告",
+                SecretKey = Guid.NewGuid().ToString("N").ToUpper(),
+                Course = "www.baidu.com",
+                Servers = servers
+            }.Toyaml();
+
+            return config;
+        }
         public static int Main(string[] args)
         {
             if (!Directory.Exists(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "config")))
@@ -26,12 +48,8 @@ namespace KingFeng
             }
             if (!File.Exists(ConfigPath))
             {
-                var config = new KingFeng.Models.ConfigModel()
-                {
-                    SecretKey = Guid.NewGuid().ToString("N").ToUpper(),
-                    Course = "www.baidu.com"
-                }.Toyaml();
-                File.AppendAllText(ConfigPath, config);
+                var config = InitConfig();
+                File.WriteAllText(Program.ConfigPath, config);
             }
 
             Log.Logger = new LoggerConfiguration()
