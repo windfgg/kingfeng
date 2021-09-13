@@ -40,6 +40,24 @@ namespace KingFeng.Models
         public string _id { get; set; }
     }
 
+    public class EnvUpdateModel
+    {
+        //public long created { get; set; }
+
+        [Required]
+        public string name { get; set; }
+
+        //public int position { get; set; }
+
+        public string remarks { get; set; }
+
+        [Required]
+        public string value { get; set; }
+
+
+        public string _id { get; set; }
+    }
+
     public class EnvsModel
     {
         public List<EnvModel> envs { get; set; }

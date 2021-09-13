@@ -3,14 +3,13 @@
     <div class="ant-card-head">
       <div class="ant-card-head-wrapper">
         <a-icon type="calendar" theme="twoTone" />
-        <div class="ant-card-head-title">公告</div>
+        <div class="ant-card-head-title">作者温馨提醒您</div>
       </div>
     </div>
     <div class="ant-card-body">
       <div>
         <p>{{ p1 }}</p>
         <p>{{ p2 }}</p>
-        <p>{{ p3 }}</p>
         <div style="display：inline;">
           本项目在
           <a @click="open('https://github.com/QiFengg/kingfeng')">Github</a>
@@ -19,11 +18,6 @@
           进行分发✨
         </div>
       </div>
-      <br />
-      <div>{{ notice }}</div>
-      <br />
-      <a :src="course" @click="open(course)">手机以及电脑抓取Cookies教程</a>
-      <br />
     </div>
   </div>
 </template>
@@ -35,27 +29,9 @@ export default {
       p1: "请关闭免密支付以及打开支付验密",
       p2: "建议微信绑定账户以保证提现能到账",
       p3: "需手动抓取Cookies 教程请点击下面链接获取",
-      tg: "",
-      course: undefined,
-      notice: undefined
     };
   },
   mounted () {
-    //获取配置文件
-    this.$http.get('api/config').then(response => {
-      if (response.data.code === 200) {
-        this.course = response.data.data.course
-        this.notice = response.data.data.notice
-        var push = localStorage.getItem('push')
-        if (push != response.data.data.push) {
-          localStorage.setItem('push', response.data.data.push)
-        }
-      }
-    }, (response) => {
-      response
-      this.$message.error("获取服务端配置失败,请检查配置文件", 2);
-      return
-    })
   },
   methods: {
     open (link) {

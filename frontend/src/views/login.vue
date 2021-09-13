@@ -1,8 +1,50 @@
 <template>
   <div class="content">
+    <!--作者公告-->
     <Notice class="Card ant-card ant-card-bordered" />
-
+    <!--用户提醒-->
     <div class="Card ant-card ant-card-bordered">
+      <div class="ant-card-head">
+        <div class="ant-card-head-wrapper">
+          <a-icon type="calendar" theme="twoTone" />
+          <div class="ant-card-head-title">{{ config.name }}温馨提醒您</div>
+        </div>
+      </div>
+      <div class="ant-card-body">
+        <div>{{ config.notice }}</div>
+      </div>
+    </div>
+    <!--节点选择-->
+    <div class="Card ant-card ant-card-bordered" v-cloak>
+      <div class="ant-card-head">
+        <div class="ant-card-head-wrapper">
+          <a-icon type="radar-chart" style="color: #2c99ff" />
+          <div class="ant-card-head-title">节点选择</div>
+        </div>
+      </div>
+      <div class="ant-card-body">
+        <div class="text-center">
+          <div>
+            <a-select
+              v-if="servers"
+              :default-active-first-option="false"
+              style="width: 100%"
+              @change="nodeChange"
+            >
+              <a-select-option
+                v-for="item in servers"
+                :key="item.id"
+                :disabled="item.maxCount - item.currentCount <= 0 && 1"
+              >
+                {{ item.name }}
+              </a-select-option>
+            </a-select>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!--登录-->
+    <div class="Card ant-card ant-card-bordered" v-if="selecItem">
       <div class="ant-card-head">
         <div class="ant-card-head-wrapper">
           <a-icon type="code" theme="twoTone" />
@@ -11,27 +53,6 @@
       </div>
       <div class="ant-card-body">
         <div class="text-center">
-          <div>
-            <a-select
-              default-value="lucy"
-              style="width: 120px"
-              @change="handleChange"
-            >
-              <a-select-option value="jack"> Jack </a-select-option>
-              <a-select-option value="lucy"> Lucy </a-select-option>
-              <a-select-option value="disabled" disabled>
-                Disabled
-              </a-select-option>
-              <a-select-option value="Yiminghe"> yiminghe </a-select-option>
-            </a-select>
-            <a-select default-value="lucy" style="width: 120px" disabled>
-              <a-select-option value="lucy"> Lucy </a-select-option>
-            </a-select>
-            <a-select default-value="lucy" style="width: 120px" loading>
-              <a-select-option value="lucy"> Lucy </a-select-option>
-            </a-select>
-          </div>
-          <br />
           <a-input
             v-model="cookies"
             class="magrin"
@@ -53,6 +74,7 @@
             type="primary"
             shape="round"
             @click="CookiesCheck"
+            :loading="isLogin.loading"
           >
             登录
           </a-button>
@@ -65,25 +87,29 @@
 <script>
 import Notice from "../components/Notice.vue";
 export default {
+  props: ["servers"],
   components: {
     Notice,
   },
   data () {
     return {
+      isLogin: {
+        loading: false,
+      },
       cookies: "",
       remarks: "",
       config: {
-        course: undefined,
-        push: undefined,
-        notice: undefined
-      }
+        notice: undefined,
+        name: undefined
+      },
+      selecItem: undefined
     };
   },
   mounted () {
     console.log('本项目在 github:https://github.com/QiFengg/kingfeng 进行分发 喜欢的话麻烦给个start 谢谢~')
     console.log('By:qifeng https://github.com/QiFengg')
   },
-  created () {
+  async created () {
     document.title = 'KingFeng - 登录页面'
 
     const uid = localStorage.getItem('uid')
@@ -93,9 +119,15 @@ export default {
     } else if (adminkey) {
       this.$router.push('/admin')
     }
+
+    await this.getServer()
+    await this.getConfig()
   },
   methods: {
     CookiesCheck () {
+      this.$set(this.isLogin, 'loading', true)
+
+      const ql_url = this.selecItem.address;
       //判断wskey格式
       const pin =
         this.cookies.match(/pin=(.*?);/) && this.cookies.match(/pin=(.*?);/)[1];
@@ -111,11 +143,13 @@ export default {
       if (pin && wskey) { //判断wskey
         if (this.remarks == '') {
           this.$message.error("备注不能为空", 1.5);
-          return
+          this.$set(this.isLogin, 'loading', false);
+          return;
         } else {
           if (this.remarks.length < 3) {
             this.$message.error("备注不能少于三个字", 1.5);
-            return
+            this.$set(this.isLogin, 'loading', false);
+            return;
           }
         }
         var WSCK = [
@@ -125,7 +159,7 @@ export default {
             remarks: this.remarks,
           },
         ];
-        this.$http.post("api/env", WSCK).then((response) => {
+        this.$http.post("api/env?ql_url=" + ql_url, WSCK).then((response) => {
           if (response.data.code === 200) {
             //console.log(response.data.data._id[0]);
             localStorage.setItem("uid", response.data.data._id[0]);
@@ -135,19 +169,22 @@ export default {
               });
             }, 1000)
             localStorage.setItem("name", this.remarks);
+            localStorage.setItem("address", ql_url);
             this.$message.success("欢迎回来 " + this.remarks, 2);
           } else {
             this.$message.error(response.data.msg, 1.5);
+            this.$set(this.isLogin, 'loading', false);
+            return;
           }
         }, (response) => {
-
           this.$message.error(response.data.msg, 1.5);
+          this.$set(this.isLogin, 'loading', false);
+          return;
         });
       } else if (pt_key && pt_pin) {//判断是否pinkey
         if (this.remarks.length == '') {
           this.remarks = pt_pin
         }
-
         var PTCK = [
           {
             name: "JD_COOKIE",
@@ -155,7 +192,7 @@ export default {
             remarks: this.remarks,
           },
         ];
-        this.$http.post("api/env", PTCK).then((response) => {
+        this.$http.post("api/env?ql_url=" + ql_url, PTCK).then((response) => {
           if (response.data.code === 200) {
             localStorage.setItem("uid", response.data.data._id[0]);
             localStorage.setItem("name", this.remarks);
@@ -165,15 +202,24 @@ export default {
                 name: "Index", params: { push: this.push }
               });
             }, 1000)
-
+            localStorage.setItem("address", ql_url);
             this.$message.success("欢迎回来 " + this.remarks, 2);
+            this.$set(this.isLogin, 'loading', false);
+            return;
           } else {
             this.$message.error(response.data.msg, 1.5);
+            this.$set(this.isLogin, 'loading', false);
+            return;
           }
         }, (response) => {
           this.$message.error(response.data.msg, 1.5);
         });
       } else { //判断是否为管理员
+        if (this.cookies == '') {
+          this.$message.error("输入框不能为空", 1.5);
+          this.$set(this.isLogin, 'loading', false);
+          return;
+        }
         this.$http.get("api/admin?key=" + this.cookies).then((response) => {
           if (response.data.code === 200) {
             localStorage.setItem("adminkey", this.cookies);
@@ -184,15 +230,47 @@ export default {
               //延迟时间：3秒
             }, 1000)
             this.$message.success("管理员 欢迎回来 ", 2);
+            this.$set(this.isLogin, 'loading', false);
+            return;
           } else {
-            this.$message.error("服务端错误,请检查服务端日志！", 1.5);
+            this.$message.error("登录失败,请检查是否输入正确", 1.5);
+            this.$set(this.isLogin, 'loading', false);
+            return;
           }
         }, (response) => {
-          response
           this.$message.error(response.data.msg, 2);
+          this.$set(this.isLogin, 'loading', false);
+          return;
         });
       }
     },
+    getServer () {
+      this.$http.get("api/servers").then(async (response) => {
+        if (response.data.code === 200) {
+          this.servers = response.data.data
+        } else {
+          this.$message.error('连接服务器错误,请稍后再试', 1.5);
+        }
+      }, (response) => {
+        response
+        this.$message.error(response.data.msg, 2);
+      });
+    },
+    getConfig () {
+      this.$http.get("api/config").then(async (response) => {
+        if (response.data.code === 200) {
+          this.config = response.data.data
+        } else {
+          this.$message.error('连接服务器错误,请稍后再试', 1.5);
+        }
+      }, (response) => {
+        response
+        this.$message.error(response.data.msg, 2);
+      });
+    },
+    nodeChange (value) {
+      this.selecItem = this.servers[value - 1];
+    }
   },
 };
 </script>

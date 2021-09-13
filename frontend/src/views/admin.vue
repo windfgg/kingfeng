@@ -53,7 +53,7 @@
     </div> -->
 
     <!-- 执行任务 -->
-    <div class="Card ant-card ant-card-bordered">
+    <!-- <div class="Card ant-card ant-card-bordered">
       <div class="ant-card-head">
         <div class="ant-card-head-wrapper">
           <a-icon type="tool" theme="twoTone" />
@@ -71,19 +71,16 @@
         <div>
           <br />
           <a-space size="large">
-            <a-button type="primary" shape="round" @click="task">
-              执行任务
-            </a-button>
             <a-button type="primary" shape="round" @click="wskeytask">
               wskey转换
             </a-button>
           </a-space>
         </div>
       </div>
-    </div>
-
+    </div> -->
+  
     <!-- 任务日志 -->
-    <div class="Card ant-card ant-card-bordered">
+    <!-- <div class="Card ant-card ant-card-bordered">
       <div class="ant-card-head">
         <div class="ant-card-head-wrapper">
           <a-icon type="tool" theme="twoTone" />
@@ -98,7 +95,7 @@
         <br />
       </div>
     </div>
-  </div>
+  </div> -->
 </template>
 
 <script>
@@ -134,35 +131,34 @@ export default {
   mounted () {
     this.adminkey = localStorage.getItem('adminkey')
 
-
     document.title = 'KingFeng - 管理员'
   },
   //销毁之前
   beforeDestroy () {
-    clearInterval(this.timer) // 清除定时器
+    //clearInterval(this.timer) // 清除定时器
   },
   methods: {
-    //执行任务
-    task () {
-      // const taksName = ;
-      // const adminkey = ;
-      this.$http.put("api/task?taskName=" + this.taskName + "&key=" + this.adminkey).then((response) => {
-        if (response.data.code === 200) {
-          this.$message.success(this.taskName + "执行成功", 1.5);
-          clearInterval(this.timer) // 清除定时器
-          this.timer = setInterval(this.readLog, 1000) // 设置定时器
-        } else {
-          this.$message.error("错误:" + response.data.msg, 2);
-        }
-      });
-    },
+    // //执行任务
+    // task () {
+    //   // const taksName = ;
+    //   // const adminkey = ;
+    //   this.$http.put("api/task?taskName=" + this.taskName + "&key=" + this.adminkey).then((response) => {
+    //     if (response.data.code === 200) {
+    //       this.$message.success(this.taskName + "执行成功", 1.5);
+    //       // clearInterval(this.timer) // 清除定时器
+    //       // this.timer = setInterval(this.readLog, 1000) // 设置定时器
+    //     } else {
+    //       this.$message.error("错误:" + response.data.msg, 2);
+    //     }
+    //   });
+    // },
     //wskye任务
     wskeytask () {
       this.taskName = ''
       this.$http.put("api/task?taskName=" + 'ws' + "&key=" + this.adminkey).then((response) => {
         if (response.data.code === 200) {
           this.$message.success("执行wskey转换成功", 1.5);
-          clearInterval(this.timer) // 清除定时器
+          //clearInterval(this.timer) // 清除定时器
           this.timer = setInterval(this.readLog, 1000) // 设置定时器
         } else {
           this.$message.error("错误:" + response.data.msg, 2);
@@ -170,33 +166,33 @@ export default {
       });
 
     },
-    //读取日志
-    readLog () {
-      console.log('执行一次')
-      var task = this.taskName == '' ? 'ws' : this.taskName
-      this.$http.get("api/log?taskName=" + task + "&key=" + this.adminkey).then((response) => {
-        if (response.data.code === 200) {
-          if (response.data.data.indexOf('执行结束') != -1) {
-            this.logs = response.data.data;
-            this.taskName = ''
-            const textarea = document.getElementById('logs');
-            textarea.scrollTop = textarea.scrollHeight;
-            clearInterval(this.timer) // 清除定时器 
-          } else {
-            //this.logs = response.data.data.replace(/\r|\n/ig, "");
-            const textarea = document.getElementById('logs');
-            textarea.scrollTop = textarea.scrollHeight;
-            this.logs = response.data.data;
-          }
-        } else {
-          this.$message.error("读取日志错误:" + response.data.msg, 2);
-        }
-      });
-    },
+    // //读取日志
+    // readLog () {
+    //   console.log('执行一次')
+    //   var task = this.taskName == '' ? 'ws' : this.taskName
+    //   this.$http.get("api/log?taskName=" + task + "&key=" + this.adminkey).then((response) => {
+    //     if (response.data.code === 200) {
+    //       if (response.data.data.indexOf('执行结束') != -1) {
+    //         this.logs = response.data.data;
+    //         this.taskName = ''
+    //         const textarea = document.getElementById('logs');
+    //         textarea.scrollTop = textarea.scrollHeight;
+    //         clearInterval(this.timer) // 清除定时器 
+    //       } else {
+    //         //this.logs = response.data.data.replace(/\r|\n/ig, "");
+    //         const textarea = document.getElementById('logs');
+    //         textarea.scrollTop = textarea.scrollHeight;
+    //         this.logs = response.data.data;
+    //       }
+    //     } else {
+    //       this.$message.error("读取日志错误:" + response.data.msg, 2);
+    //     }
+    //   });
+    // },
     //退出登录
     logout () {
       localStorage.removeItem('adminkey');
-      clearInterval(this.timer) // 清除定时器
+      // clearInterval(this.timer) // 清除定时器
       this.$message.success("退出成功", 1);
       setTimeout(() => {
         this.$router.push('/')

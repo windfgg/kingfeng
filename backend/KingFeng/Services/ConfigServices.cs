@@ -68,7 +68,6 @@ namespace KingFeng.Services
                 PushImageUrl = "https://img2.baidu.com/it/u=1007188585,453085648&fm=26&fmt=auto&gp=0.jpg",
                 Notice = "你好,这里可以自定义公告",
                 SecretKey = Guid.NewGuid().ToString("N").ToUpper(),
-                Course = "www.baidu.com",
                 Servers = servers
             }.Toyaml();
 

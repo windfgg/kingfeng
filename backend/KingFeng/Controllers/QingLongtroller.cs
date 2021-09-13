@@ -43,7 +43,7 @@ namespace KingFeng.Controllers
             var Results = new Dictionary<string, object>();
 
             //获取Token
-            var ServerState=await CheckServer(ql_url);
+            var ServerState = await CheckServer(ql_url);
             if (string.IsNullOrWhiteSpace(ServerState.token))
             {
                 return new ContentResultModel()
@@ -54,9 +54,9 @@ namespace KingFeng.Controllers
 
             Requset requset = new Requset();
             var Uri = new Uri($"{ql_url}open/envs?t={ExtensionsMethod.GetTimeStamp()}");
-            var headers=new Dictionary<string, string>();
+            var headers = new Dictionary<string, string>();
             var parameters = new List<Parameter>();
-    
+
             headers.Add("Authorization", $"{ServerState.token}");
 
             var body = envs.ToJson();
@@ -109,7 +109,7 @@ namespace KingFeng.Controllers
         /// <returns></returns>
         [HttpPost]
         [Produces("application/json")]
-        public async Task<ContentResultModel> updateEnv([Required] string ql_url,[Required] string uid, [Required] string wskey, string remarks = "")
+        public async Task<ContentResultModel> updateEnv([Required] string ql_url, [Required] string uid, [Required] string wskey, string remarks = "")
         {
             var Results = new Dictionary<string, object>();
 
@@ -131,8 +131,8 @@ namespace KingFeng.Controllers
             }
 
 
-            var envs = await this.envs(ql_url,_config.config.SecretKey);
-            var data = envs.data.ToJson().JsonTo<List<EnvModel2>>();
+            var envs = await this.envs(ql_url, _config.config.SecretKey);
+            var data = envs.data.ToJson().JsonTo<List<EnvUpdateModel>>();
             data = data.Where(i => i._id.Contains(uid)).ToList();
 
             if (data != null && data.Count != 0)
@@ -152,7 +152,7 @@ namespace KingFeng.Controllers
                 headers.Add("Authorization", $"{ServerState.token}");
 
                 var Content = await requset.HttpRequset(Uri, Method.PUT, headers, parameters);
-        
+
                 if (Content.ContainsKey("code") || Content["code"].ToString() == "200")
                 {
                     _logger.LogInformation($"用户{env.name}修改环境变量成功");
@@ -225,7 +225,7 @@ namespace KingFeng.Controllers
                 var parameters = new List<Parameter>();
 
                 headers.Add("Authorization", $"{ServerState.token}");
-                parameters.Add(new Parameter( "application/json", ids.ToJson(), ParameterType.RequestBody));
+                parameters.Add(new Parameter("application/json", ids.ToJson(), ParameterType.RequestBody));
 
                 var Content = await requset.HttpRequset(Uri, Method.DELETE, headers, parameters);
                 if (Content.ContainsKey("code") || Content["code"].ToString() == "200")
@@ -396,7 +396,7 @@ namespace KingFeng.Controllers
             TaskIdLsit.Add(taskData.Item2);
             headers.Add("Authorization", $"{ServerState.token}");
             parameters.Add(new Parameter("application/json", TaskIdLsit.ToJson(), ParameterType.RequestBody));
-       
+
             var Content = await requset.HttpRequset(Uri, Method.PUT, headers, parameters);
 
             if (TaskIdLsit.Count != 0)
@@ -412,7 +412,7 @@ namespace KingFeng.Controllers
                     };
                 }
             }
-        
+
             return new ContentResultModel()
             {
                 code = 400,
@@ -426,13 +426,13 @@ namespace KingFeng.Controllers
         /// <param name="ql_url"></param>
         /// <param name="taskName"></param>
         /// <returns></returns>
-        private async Task<(bool,string)> taskExitst([Required] string ql_url, [Required] string taskName, string token)
+        private async Task<(bool, string)> taskExitst([Required] string ql_url, [Required] string taskName, string token)
         {
             var ServerState = await CheckServer(ql_url);
             if (string.IsNullOrWhiteSpace(ServerState.token))
             {
                 _logger.LogError("执行任务存在性判断 token获取失败");
-                return (false,"");
+                return (false, "");
             }
 
             Requset requset = new Requset();
@@ -631,8 +631,8 @@ namespace KingFeng.Controllers
         {
             var Data = new Dictionary<string, object>();
             Data.Add("push", _config.config.PushImageUrl);
-            Data.Add("course", _config.config.Course);
             Data.Add("notice", _config.config.Notice);
+            Data.Add("name", _config.config.UserName);
 
             return new ContentResultModel()
             {
@@ -710,14 +710,18 @@ namespace KingFeng.Controllers
         public async Task<ContentResultModel> servers()
         {
             var list = new List<ConfigItemModel1>();
+            int Id = 0;
             foreach (var item in _config.config.Servers)
             {
+                Id++;
                 list.Add(new ConfigItemModel1()
                 {
-                    QL_Name = item.QL_Name,
-                    QL_URL = item.QL_URL,
+                    ID = Id,
+                    Name = item.QL_Name,
+                    Address = item.QL_URL,
                     MaxCount = item.MaxCount,
                     CurrentCount = await GetCurrentCount(item)
+                    //CurrentCount = item.MaxCount
                 });
             }
 

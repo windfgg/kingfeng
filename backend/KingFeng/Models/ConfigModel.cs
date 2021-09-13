@@ -15,7 +15,7 @@ namespace KingFeng.Models
 
         public string Notice { get; set; }
 
-        public string Course { get; set; }
+        public string UserName { get; set; }
 
         public string PushImageUrl { get; set; }
     }
@@ -35,9 +35,10 @@ namespace KingFeng.Models
 
     public class ConfigItemModel1
     {
-        public string QL_Name { get; set; }
+        public int ID { get; set; }
+        public string Name { get; set; }
 
-        public string QL_URL { get; set; }
+        public string Address { get; set; }
 
         public int MaxCount { get; set; }
 

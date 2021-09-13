@@ -21,15 +21,12 @@
           </p>
         </div>
         <br />
-        <a-input v-model="wskey" placeholder="请输入新的wskey" />
+        <a-input v-model="wskey" placeholder="请输入新的cookies" />
         <div>
           <br />
           <a-space>
             <a-button type="primary" shape="round" @click="updatewskey">
-              更新wskey
-            </a-button>
-            <a-button type="danger" shape="round" @click="logout">
-              退出登录
+              更新cookies
             </a-button>
             <a-button type="danger" shape="round" @click="remove">
               删除账号
@@ -70,35 +67,38 @@ export default {
       return this.status == 0 ? 'check-circle' : 'close-circle'
     },
     color: function () {
-      return this.status == 0 ? '#52c41a' : '#eb2f96'
+      return this.status == 0 ? '#52c41a' : '#DC143C'
     },
   },
   created () {
+    document.title = 'KingFeng - 个人中心'
     const uid = localStorage.getItem('uid')
     if (!uid) {
       this.$router.push('/')
     }
+    this.remarks = localStorage.getItem('name')
+    this.push = localStorage.getItem('push')
   },
   mounted () {
-    this.push = localStorage.getItem('push')
     const uid = localStorage.getItem('uid')
-    this.$http.get("api/exitst?uid=" + uid).then((response) => {
-      if (response.data.code === 200) {
-        const time = response.data.msg
-        this.remarks = localStorage.getItem('name')
-        this.timestamp = this.dateFormat(time)
+    const address = localStorage.getItem('address')
 
+    this.$http.get("api/exitst?uid=" + uid + "&ql_url=" + address).then((response) => {
+      if (response.data.code === 200) {
+        let time = response.data.msg
+        this.timestamp = this.dateFormat(time)
         if (!response.data.data) {//如果被禁用 更改状态
           this.status = 1
           this.$message.error("用户被管理员禁用,请联系管理员处理", 3);
         }
       } else {
         this.$message.error("用户被删除,请联系管理员处理", 3);
-        localStorage.removeItem('uid')
+        this.delete()
         this.$router.push('/')
       }
     })
-    document.title = 'KingFeng - 个人中心'
+
+    this.getConfig()
   },
   methods: {
     //时间转换
@@ -118,24 +118,15 @@ export default {
       let dateTime = y + '-' + m + '-' + d + ' ' + h + ':' + M + ':' + s;
       return dateTime;
     },
-    //退出
-    logout () {
-      localStorage.removeItem('uid');
-      clearInterval(this.timer) // 清除定时器
-      this.$message.success("退出成功", 1);
-      setTimeout(() => {
-        this.$router.push('/')
-      }, 1000)
-    },
     //删除账号
     remove () {
+      const address = localStorage.getItem('address');
       const uid = localStorage.getItem('uid')
-      this.$http.delete('api/deleteEnv?uid=' + uid).then(response => {
+      this.$http.delete('api/deleteEnv?ql_url=' + address + "&uid=" + uid).then(response => {
         if (response.data.code == 200) {
-          localStorage.removeItem('uid');
+          this.delete()
           this.$message.success('删除账号成功', 2)
           this.$router.push('/')
-          localStorage.removeItem('name');
         } else {
           this.$message.error('删除失败,请联系管理员处理')
         }
@@ -143,13 +134,23 @@ export default {
     },
     //更新环境变量
     updatewskey () {
+      const address = localStorage.getItem('address');
+
       const pin =
         this.wskey.match(/pin=(.*?);/) && this.wskey.match(/pin=(.*?);/)[1];
       pin == decodeURIComponent(pin);
       const wskey =
         this.wskey.match(/wskey=(.*?);/) && this.wskey.match(/wskey=(.*?);/)[1];
+
+      //判断pin格式
+      const pt_key =
+        this.wskey.match(/pt_key=(.*?);/) && this.wskey.match(/pt_key=(.*?);/)[1];
+      pin == decodeURIComponent(pin);
+      const pt_pin =
+        this.wskey.match(/pt_pin=(.*?);/) && this.wskey.match(/pt_pin=(.*?);/)[1];
+
       if (pin && wskey) {
-        this.$http.post('api/updateEnv?uid=' + localStorage.getItem('uid') + '&wskey=' + this.wskey).then(response => {
+        this.$http.post('api/updateEnv?ql_url=' + address + "&uid=" + localStorage.getItem('uid') + '&wskey=' + this.wskey).then(response => {
           if (response.data.code == 200) {
             this.wskey = ''
             this.$message.success('更新wskey成功', 2)
@@ -157,10 +158,35 @@ export default {
             this.$message.error('更新失败,请联系管理员处理')
           }
         })
-      } else {
-        this.$message.error('请检查wskey格式是否正确')
+      } else if (pt_key && pt_pin) {//判断是否pinck
+        this.$http.post('api/updateEnv?ql_url=' + address + "&uid=" + localStorage.getItem('uid') + '&wskey=' + this.wskey).then(response => {
+          if (response.data.code == 200) {
+            this.wskey = ''
+            this.$message.success('更新pinck成功', 2)
+          } else {
+            this.$message.error('更新失败,请联系管理员处理')
+          }
+        })
       }
 
+    },
+    getConfig () { //获取配置文件
+      this.$http.get("api/config").then(async (response) => {
+        if (response.data.code === 200) {
+          this.push = response.data.data.push
+        } else {
+          this.$message.error('连接服务器错误,请稍后再试', 1.5);
+        }
+      }, (response) => {
+        response
+        this.$message.error(response.data.msg, 2);
+      });
+    },
+    //删除本地缓存
+    delete () {
+      localStorage.removeItem('uid')
+      localStorage.removeItem('name')
+      localStorage.removeItem('address')
     }
   }
 }
@@ -173,8 +199,7 @@ export default {
   max-width: 64rem;
 }
 .img {
-  border: 0px solid;
-  width: 100%;
+  width: 300px;
   height: 300px;
 }
 .Card {
