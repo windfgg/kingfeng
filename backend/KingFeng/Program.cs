@@ -9,7 +9,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using KingFeng.Models;
 using YamlDotNet.Serialization;
-using Autofac.Extensions.DependencyInjection;
 using Serilog;
 using Serilog.Events;
 
@@ -24,18 +23,15 @@ namespace KingFeng
             servers.Add(new ConfigItemModel()
             {
                 QL_URL = "http://localhost:5700/",
-                QL_Client_ID = "123",
-                QL_Client_Secret = "123",
+                QL_Client_ID = "你的Client_ID",
+                QL_Client_Secret = "你的Client_Secre",
                 MaxCount = 100,
-                QL_Name = "广州节点"
+                QL_Name = "默认节点"
             });
             var config = new KingFeng.Models.ConfigModel()
             {
-                PushImageUrl = "https://img2.baidu.com/it/u=1007188585,453085648&fm=26&fmt=auto&gp=0.jpg",
-                Notice = "你好,这里可以自定义公告",
                 SecretKey = Guid.NewGuid().ToString("N").ToUpper(),
                 Servers = servers,
-                UserName="柒凨"
             }.Toyaml();
 
             return config;

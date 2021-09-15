@@ -2,8 +2,13 @@
   <div class="Card ant-card ant-card-bordered">
     <div class="ant-card-head">
       <div class="ant-card-head-wrapper">
-        <a-icon type="calendar" theme="twoTone" />
-        <div class="ant-card-head-title">作者温馨提醒您</div>
+        <a-icon
+          type="calendar"
+          theme="twoTone"
+        />
+        <div class="ant-card-head-title">
+          作者温馨提醒您
+        </div>
       </div>
     </div>
     <div class="ant-card-body">

@@ -130,7 +130,6 @@ namespace KingFeng.Controllers
                 };
             }
 
-
             var envs = await this.envs(ql_url, _config.config.SecretKey);
             var data = envs.data.ToJson().JsonTo<List<EnvUpdateModel>>();
             data = data.Where(i => i._id.Contains(uid)).ToList();
@@ -178,6 +177,59 @@ namespace KingFeng.Controllers
                 code = 400,
                 msg = "服务繁忙"
             };
+        }
+
+        /// <summary>
+        /// pinck检查
+        /// </summary>
+        /// <param name="pinck"></param>
+        /// <returns></returns>
+        [HttpGet]
+        public async Task<ContentResultModel> CheeckPinCk([Required] string pinck)
+        {
+            Requset requset = new Requset();
+            var Uri = new Uri($"https://plogin.m.jd.com/cgi-bin/ml/islogin");
+            var headers = new Dictionary<string, string>();
+
+            headers.Add("Cookie", $"{pinck}");
+            headers.Add("referer", $"https://h5.m.jd.com/");
+            headers.Add("User-Agent", $"jdapp;iPhone;10.1.2;15.0;network/wifi;Mozilla/5.0 (iPhone; CPU iPhone OS 15_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148;supportJDSHWK/1");
+
+            var Content = await requset.HttpRequset(Uri, Method.GET, headers);
+            if (Content != null)
+            {
+                if (Content.ToString().Contains("1"))
+                {
+                    return new ContentResultModel()
+                    {
+                        code = 200,
+                    };
+                }
+                else if (Content.ToString().Contains("0"))
+                {
+                    return new ContentResultModel()
+                    {
+                        code = 400,
+                        msg = "当前未登录"
+                    };
+                }
+                else
+                {
+                    return new ContentResultModel()
+                    {
+                        code = 400,
+                        msg = "未知返回"
+                    };
+                }
+            }
+            else
+            {
+                return new ContentResultModel()
+                {
+                    code = 400,
+                    msg = "请检查服务器网络是否正常"
+                };
+            }
         }
 
         /// <summary>
@@ -283,11 +335,12 @@ namespace KingFeng.Controllers
             }
 
             var ServerState = await CheckServer(ql_url);
-            if (string.IsNullOrWhiteSpace(ServerState.token))
+            if (!ServerState.state)
             {
                 return new ContentResultModel()
                 {
-                    code = 400
+                    code = 400,
+                    msg = ServerState.token
                 };
             }
 
@@ -492,40 +545,55 @@ namespace KingFeng.Controllers
             {
                 return (false, "");
             }
-
-            //获取token
-            if (model.QL_URL != null && model.QL_Client_ID != null && model.QL_Client_Secret != null && model.QL_Name != null)
+            try
             {
-                Requset requset = new Requset();
-                var Uri = new Uri($"{model.QL_URL}open/auth/token?client_id={model.QL_Client_ID}&client_secret={model.QL_Client_Secret}");
-                var Content = await requset.HttpRequset(Uri, Method.GET);
-
-                //判断获取token是否成功
-                if (Content.ContainsKey("code") && Content["code"].ToString() == "200")
+                if (model.QL_URL != null && model.QL_Client_ID != null && model.QL_Client_Secret != null && model.QL_Name != null)
                 {
-                    var token = Content["data"]["token"]?.ToString();
-                    token = "Bearer " + token;
+                    Requset requset = new Requset();
+                    var Uri = new Uri($"{model.QL_URL}open/auth/token?client_id={model.QL_Client_ID}&client_secret={model.QL_Client_Secret}");
+                    var Content = await requset.HttpRequset(Uri, Method.GET);
+                    if (Content != null)
+                    {
+                        //判断获取token是否成功
+                        if (Content.ContainsKey("code"))
+                        {
+                            var token = Content["data"]["token"]?.ToString();
+                            token = "Bearer " + token;
 
 
-                    //if (model.MaxCount >= wsKeyCount + pinKeyCount)
-                    //{
-                    //    _logger.LogWarning($"服务名称{model.QL_Name}wsck和pinck已经到达最大数量 已无法添加新的cookies");
-                    //    return (false, "");
-                    //}
+                            //if (model.MaxCount >= wsKeyCount + pinKeyCount)
+                            //{
+                            //    _logger.LogWarning($"服务名称{model.QL_Name}wsck和pinck已经到达最大数量 已无法添加新的cookies");
+                            //    return (false, "");
+                            //}
 
-                    return (true, token);
+                            return (true, token);
+                        }
+                        else
+                        {
+                            _logger.LogError($"服务名称{model.QL_Name}登录错误:{Content["message"]?.ToString()}");
+                            return (false, Content["message"]?.ToString());
+                        }
+                    }
+                    else
+                    {
+                        _logger.LogError($"服务名称{model.QL_Name} 登录错误:{ql_url}获取数据超时");
+                        return (false, "");
+                    }
+
                 }
                 else
                 {
-                    _logger.LogError($"服务名称{model.QL_Name}登录错误:{Content["Content"]?.ToString()}");
-                    return (false, "");
+                    _logger.LogError($"服务名称{model.QL_Name} 请检查QL地址配置是否正确");
+                    return (false, "请检查服务器配置是否正确");
                 }
             }
-            else
+            catch
             {
-                _logger.LogError($"服务名称{model.QL_Name} 请检查配置是否正确");
-                return (false, "");
+                return (false, "连接不到节点,请检查节点配置");
             }
+            //获取token
+
         }
 
         #endregion
@@ -642,6 +710,32 @@ namespace KingFeng.Controllers
         }
 
         /// <summary>
+        /// 修改配置
+        /// </summary>
+        /// <returns></returns>
+        [HttpPost]
+        public ContentResultModel config([Required]UpdateConfigItemModel model)
+        {
+            if (model.name == "") model.name = null;
+            if (model.notice == "") model.notice = null;
+            _config.UpdateConfig(new ConfigModel()
+            {
+                Servers = _config.config.Servers,
+                Notice = model.notice,
+                PushImageUrl = model.push,
+                SecretKey = _config.config.SecretKey,
+                UserName = model.name,
+                WsKeyTaskFullName = _config.config.WsKeyTaskFullName
+            });
+
+            return new ContentResultModel()
+            {
+                code = 200,
+                data = "修改成功"
+            };
+        }
+
+        /// <summary>
         /// 修改SecretKey
         /// </summary>
         /// <returns></returns>
@@ -709,27 +803,38 @@ namespace KingFeng.Controllers
         [HttpGet]
         public async Task<ContentResultModel> servers()
         {
-            var list = new List<ConfigItemModel1>();
-            int Id = 0;
-            foreach (var item in _config.config.Servers)
+            try
             {
-                Id++;
-                list.Add(new ConfigItemModel1()
+                var list = new List<ConfigItemModel1>();
+                int Id = 0;
+                foreach (var item in _config.config.Servers)
                 {
-                    ID = Id,
-                    Name = item.QL_Name,
-                    Address = item.QL_URL,
-                    MaxCount = item.MaxCount,
-                    CurrentCount = await GetCurrentCount(item)
-                    //CurrentCount = item.MaxCount
-                });
-            }
+                    Id++;
+                    list.Add(new ConfigItemModel1()
+                    {
+                        ID = Id,
+                        Name = item.QL_Name,
+                        Address = item.QL_URL,
+                        MaxCount = item.MaxCount,
+                        CurrentCount = await GetCurrentCount(item)
+                        //CurrentCount = item.MaxCount
+                    });
+                }
 
-            return new ContentResultModel()
+                return new ContentResultModel()
+                {
+                    code = 200,
+                    data = list
+                };
+            }
+            catch
             {
-                code = 200,
-                data = list
-            };
+                return new ContentResultModel()
+                {
+                    code = 400,
+                    msg = "请检查配置文件是否正确,青龙是否可以正常登录 "
+                };
+            }
         }
 
         /// <summary>
@@ -739,6 +844,7 @@ namespace KingFeng.Controllers
         /// <returns></returns>
         private async Task<int?> GetCurrentCount(ConfigItemModel config)
         {
+
             var envList = await envs(config.QL_URL, _config.config.SecretKey);
             var envData = envList.data.ToJson().JsonTo<List<EnvModel2>>();
 

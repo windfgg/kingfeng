@@ -65,10 +65,11 @@ namespace KingFeng.Services
             });
             var config = new KingFeng.Models.ConfigModel()
             {
-                PushImageUrl = "https://img2.baidu.com/it/u=1007188585,453085648&fm=26&fmt=auto&gp=0.jpg",
+                PushImageUrl = "https://i0.hdslb.com/bfs/album/2c6255c33adf1952c068cbb081d006997a6f506e.png",
                 Notice = "你好,这里可以自定义公告",
                 SecretKey = Guid.NewGuid().ToString("N").ToUpper(),
-                Servers = servers
+                Servers = servers,
+                UserName = "KingFeng作者"
             }.Toyaml();
 
             return config;

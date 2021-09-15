@@ -11,6 +11,7 @@ import {
   message,
   Space,
   Select,
+  Spin,
 } from "ant-design-vue"; //引入Ant-Desgin
 const components = [
   Button,
@@ -21,6 +22,7 @@ const components = [
   Space,
   Select,
   Select.Option,
+  Spin,
 ];
 Vue.use(VueResource);
 

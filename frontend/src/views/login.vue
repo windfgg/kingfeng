@@ -3,52 +3,68 @@
     <!--作者公告-->
     <Notice class="Card ant-card ant-card-bordered" />
     <!--用户提醒-->
-    <div class="Card ant-card ant-card-bordered">
-      <div class="ant-card-head">
-        <div class="ant-card-head-wrapper">
-          <a-icon type="calendar" theme="twoTone" />
-          <div class="ant-card-head-title">{{ config.name }}温馨提醒您</div>
+    <div v-if="lodings.noticIsShow">
+      <a-spin :spinning="!lodings.noticeIsLoding">
+        <div
+          v-show="lodings.noticeIsLoding"
+          class="Card ant-card ant-card-bordered"
+        >
+          <div class="ant-card-head">
+            <div class="ant-card-head-wrapper">
+              <a-icon type="calendar" theme="twoTone" />
+              <div class="ant-card-head-title">{{ config.name }}温馨提醒您</div>
+            </div>
+          </div>
+          <div class="ant-card-body">
+            {{ config.notice }}
+          </div>
         </div>
-      </div>
-      <div class="ant-card-body">
-        <div>{{ config.notice }}</div>
-      </div>
+      </a-spin>
     </div>
     <!--节点选择-->
-    <div class="Card ant-card ant-card-bordered" v-cloak>
-      <div class="ant-card-head">
-        <div class="ant-card-head-wrapper">
-          <a-icon type="radar-chart" style="color: #2c99ff" />
-          <div class="ant-card-head-title">节点选择</div>
+    <a-spin :spinning="!lodings.serverIsLoding">
+      <div
+        v-show="lodings.serverIsLoding"
+        class="Card ant-card ant-card-bordered"
+      >
+        <div class="ant-card-head">
+          <div class="ant-card-head-wrapper">
+            <a-icon type="radar-chart" style="color: #2c99ff" />
+            <div class="ant-card-head-title">
+              节点选择
+            </div>
+          </div>
         </div>
-      </div>
-      <div class="ant-card-body">
-        <div class="text-center">
-          <div>
-            <a-select
-              v-if="servers"
-              :default-active-first-option="false"
-              style="width: 100%"
-              @change="nodeChange"
-            >
-              <a-select-option
-                v-for="item in servers"
-                :key="item.id"
-                :disabled="item.maxCount - item.currentCount <= 0 && 1"
+        <div class="ant-card-body">
+          <div class="text-center">
+            <div>
+              <a-select
+                v-if="servers"
+                :default-active-first-option="false"
+                style="width: 100%"
+                @change="nodeChange"
               >
-                {{ item.name }}
-              </a-select-option>
-            </a-select>
+                <a-select-option
+                  v-for="item in servers"
+                  :key="item.id"
+                  :disabled="item.maxCount - item.currentCount <= 0 && 1"
+                >
+                  {{ item.name }}
+                </a-select-option>
+              </a-select>
+            </div>
           </div>
         </div>
       </div>
-    </div>
+    </a-spin>
     <!--登录-->
-    <div class="Card ant-card ant-card-bordered" v-if="selecItem">
+    <div v-if="selecItem" class="Card ant-card ant-card-bordered">
       <div class="ant-card-head">
         <div class="ant-card-head-wrapper">
           <a-icon type="code" theme="twoTone" />
-          <div class="ant-card-head-title">Cookies登录</div>
+          <div class="ant-card-head-title">
+            Cookies登录
+          </div>
         </div>
       </div>
       <div class="ant-card-body">
@@ -73,8 +89,8 @@
             class="magrin"
             type="primary"
             shape="round"
-            @click="CookiesCheck"
             :loading="isLogin.loading"
+            @click="CookiesCheck"
           >
             登录
           </a-button>
@@ -87,12 +103,18 @@
 <script>
 import Notice from "../components/Notice.vue";
 export default {
-  props: ["servers"],
   components: {
     Notice,
   },
-  data () {
+  // props: ["servers"],
+  data() {
     return {
+      servers: undefined,
+      lodings: {
+        serverIsLoding: true,
+        noticeIsLoding: true,
+        noticIsShow: false,
+      },
       isLogin: {
         loading: false,
       },
@@ -100,55 +122,61 @@ export default {
       remarks: "",
       config: {
         notice: undefined,
-        name: undefined
+        name: undefined,
       },
-      selecItem: undefined
+      selecItem: undefined,
     };
   },
-  mounted () {
-    console.log('本项目在 github:https://github.com/QiFengg/kingfeng 进行分发 喜欢的话麻烦给个start 谢谢~')
-    console.log('By:qifeng https://github.com/QiFengg')
-  },
-  async created () {
-    document.title = 'KingFeng - 登录页面'
+  mounted() {
+    console.log(
+      "本项目在 github:https://github.com/QiFengg/kingfeng 进行分发 喜欢的话麻烦给个start 谢谢~"
+    );
+    console.log("By:qifeng https://github.com/QiFengg");
 
-    const uid = localStorage.getItem('uid')
-    const adminkey = localStorage.getItem('adminkey')
+    this.getServer();
+  },
+  created() {
+    document.title = "KingFeng - 登录页面";
+
+    const uid = localStorage.getItem("uid");
+    const adminkey = localStorage.getItem("adminkey");
     if (uid) {
-      this.$router.push('/index')
+      this.$router.push("/index");
     } else if (adminkey) {
-      this.$router.push('/admin')
+      this.$router.push("/admin");
     }
 
-    await this.getServer()
-    await this.getConfig()
+    this.getConfig();
   },
   methods: {
-    CookiesCheck () {
-      this.$set(this.isLogin, 'loading', true)
-
+    CookiesCheck() {
+      this.$set(this.isLogin, "loading", true);
       const ql_url = this.selecItem.address;
       //判断wskey格式
       const pin =
         this.cookies.match(/pin=(.*?);/) && this.cookies.match(/pin=(.*?);/)[1];
       pin == decodeURIComponent(pin);
       const wskey =
-        this.cookies.match(/wskey=(.*?);/) && this.cookies.match(/wskey=(.*?);/)[1];
+        this.cookies.match(/wskey=(.*?);/) &&
+        this.cookies.match(/wskey=(.*?);/)[1];
       //判断pin格式
       const pt_key =
-        this.cookies.match(/pt_key=(.*?);/) && this.cookies.match(/pt_key=(.*?);/)[1];
+        this.cookies.match(/pt_key=(.*?);/) &&
+        this.cookies.match(/pt_key=(.*?);/)[1];
       pin == decodeURIComponent(pin);
       const pt_pin =
-        this.cookies.match(/pt_pin=(.*?);/) && this.cookies.match(/pt_pin=(.*?);/)[1];
-      if (pin && wskey) { //判断wskey
-        if (this.remarks == '') {
+        this.cookies.match(/pt_pin=(.*?);/) &&
+        this.cookies.match(/pt_pin=(.*?);/)[1];
+      if (pin && wskey) {
+        //判断wskey
+        if (this.remarks == "") {
           this.$message.error("备注不能为空", 1.5);
-          this.$set(this.isLogin, 'loading', false);
+          this.$set(this.isLogin, "loading", false);
           return;
         } else {
           if (this.remarks.length < 3) {
             this.$message.error("备注不能少于三个字", 1.5);
-            this.$set(this.isLogin, 'loading', false);
+            this.$set(this.isLogin, "loading", false);
             return;
           }
         }
@@ -159,118 +187,166 @@ export default {
             remarks: this.remarks,
           },
         ];
-        this.$http.post("api/env?ql_url=" + ql_url, WSCK).then((response) => {
-          if (response.data.code === 200) {
-            //console.log(response.data.data._id[0]);
-            localStorage.setItem("uid", response.data.data._id[0]);
-            setTimeout(() => {
-              this.$router.push({
-                name: "Index", params: { push: this.push }
-              });
-            }, 1000)
-            localStorage.setItem("name", this.remarks);
-            localStorage.setItem("address", ql_url);
-            this.$message.success("欢迎回来 " + this.remarks, 2);
-          } else {
-            this.$message.error(response.data.msg, 1.5);
-            this.$set(this.isLogin, 'loading', false);
-            return;
-          }
-        }, (response) => {
-          this.$message.error(response.data.msg, 1.5);
-          this.$set(this.isLogin, 'loading', false);
-          return;
-        });
-      } else if (pt_key && pt_pin) {//判断是否pinkey
-        if (this.remarks.length == '') {
-          this.remarks = pt_pin
-        }
-        var PTCK = [
-          {
-            name: "JD_COOKIE",
-            value: this.cookies,
-            remarks: this.remarks,
+        this.$http.post("api/env?ql_url=" + ql_url, WSCK).then(
+          (response) => {
+            if (response.data.code === 200) {
+              //console.log(response.data.data._id[0]);
+              localStorage.setItem("uid", response.data.data._id[0]);
+              setTimeout(() => {
+                this.$router.push({
+                  name: "Index",
+                  params: { push: this.push },
+                });
+              }, 1000);
+              localStorage.setItem("name", this.remarks);
+              localStorage.setItem("address", ql_url);
+              this.$message.success("欢迎回来 " + this.remarks, 2);
+            } else {
+              this.$message.error(response.data.msg, 1.5);
+              this.$set(this.isLogin, "loading", false);
+              return;
+            }
           },
-        ];
-        this.$http.post("api/env?ql_url=" + ql_url, PTCK).then((response) => {
-          if (response.data.code === 200) {
-            localStorage.setItem("uid", response.data.data._id[0]);
-            localStorage.setItem("name", this.remarks);
-
-            setTimeout(() => {
-              this.$router.push({
-                name: "Index", params: { push: this.push }
-              });
-            }, 1000)
-            localStorage.setItem("address", ql_url);
-            this.$message.success("欢迎回来 " + this.remarks, 2);
-            this.$set(this.isLogin, 'loading', false);
-            return;
-          } else {
+          (response) => {
             this.$message.error(response.data.msg, 1.5);
-            this.$set(this.isLogin, 'loading', false);
+            this.$set(this.isLogin, "loading", false);
             return;
           }
-        }, (response) => {
-          this.$message.error(response.data.msg, 1.5);
-        });
-      } else { //判断是否为管理员
-        if (this.cookies == '') {
+        );
+      } else if (pt_key && pt_pin) {
+        //判断是否pinkey
+
+        this.$http
+          .get("api/CheeckPinCk?pinck=" + this.cookies)
+          .then((response) => {
+            if (response.data.code != 200) {
+              this.$message.error("请检查pinck 是否过期以及是否正确", 1.5);
+              this.$set(this.isLogin, "loading", false);
+              return;
+            } else {
+              if (this.remarks.length == "") {
+                this.remarks = pt_pin;
+              }
+              var PTCK = [
+                {
+                  name: "JD_COOKIE",
+                  value: this.cookies,
+                  remarks: this.remarks,
+                },
+              ];
+              this.$http.post("api/env?ql_url=" + ql_url, PTCK).then(
+                (response) => {
+                  if (response.data.code === 200) {
+                    localStorage.setItem("uid", response.data.data._id[0]);
+                    localStorage.setItem("name", this.remarks);
+
+                    setTimeout(() => {
+                      this.$router.push({
+                        name: "Index",
+                        params: { push: this.push },
+                      });
+                    }, 1000);
+                    localStorage.setItem("address", ql_url);
+                    this.$message.success("欢迎回来 " + this.remarks, 2);
+                    this.$set(this.isLogin, "loading", false);
+                    return;
+                  } else {
+                    this.$message.error(response.data.msg, 1.5);
+                    this.$set(this.isLogin, "loading", false);
+                    return;
+                  }
+                },
+                (response) => {
+                  this.$message.error(response.data.msg, 1.5);
+                }
+              );
+            }
+          });
+      } else {
+        //判断是否为管理员
+        if (this.cookies == "") {
           this.$message.error("输入框不能为空", 1.5);
-          this.$set(this.isLogin, 'loading', false);
+          this.$set(this.isLogin, "loading", false);
           return;
         }
-        this.$http.get("api/admin?key=" + this.cookies).then((response) => {
-          if (response.data.code === 200) {
-            localStorage.setItem("adminkey", this.cookies);
-            setTimeout(() => {
-              this.$router.push({
-                name: "Admin"
-              });
-              //延迟时间：3秒
-            }, 1000)
-            this.$message.success("管理员 欢迎回来 ", 2);
-            this.$set(this.isLogin, 'loading', false);
-            return;
-          } else {
-            this.$message.error("登录失败,请检查是否输入正确", 1.5);
-            this.$set(this.isLogin, 'loading', false);
+        this.$http.get("api/admin?key=" + this.cookies).then(
+          (response) => {
+            if (response.data.code === 200) {
+              localStorage.setItem("adminkey", this.cookies);
+              this.$message.success("管理员 欢迎回来 ", 2);
+              setTimeout(() => {}, 200);
+              setTimeout(() => {
+                this.$router.push({
+                  name: "Admin",
+                });
+                //延迟时间：3秒
+              }, 1000);
+              this.$set(this.isLogin, "loading", false);
+              return;
+            } else {
+              this.$message.error("登录失败,请检查是否输入正确", 1.5);
+              this.$set(this.isLogin, "loading", false);
+              return;
+            }
+          },
+          (response) => {
+            this.$message.error(response.data.msg, 2);
+            this.$set(this.isLogin, "loading", false);
             return;
           }
-        }, (response) => {
-          this.$message.error(response.data.msg, 2);
-          this.$set(this.isLogin, 'loading', false);
-          return;
-        });
+        );
       }
     },
-    getServer () {
-      this.$http.get("api/servers").then(async (response) => {
-        if (response.data.code === 200) {
-          this.servers = response.data.data
-        } else {
-          this.$message.error('连接服务器错误,请稍后再试', 1.5);
+    getServer() {
+      this.lodings.serverIsLoding = !this.lodings.serverIsLoding;
+      this.$http.get("api/servers").then(
+        async (response) => {
+          if (response.data.code === 200) {
+            this.servers = response.data.data;
+          } else {
+            this.$message.error(response.data.msg, 1.5);
+          }
+          setTimeout(() => {
+            this.lodings.serverIsLoding = !this.lodings.serverIsLoding;
+          }, 200);
+        },
+        (response) => {
+          response;
+          this.$message.error(response.data.msg, 3);
         }
-      }, (response) => {
-        response
-        this.$message.error(response.data.msg, 2);
-      });
+      );
     },
-    getConfig () {
-      this.$http.get("api/config").then(async (response) => {
-        if (response.data.code === 200) {
-          this.config = response.data.data
-        } else {
-          this.$message.error('连接服务器错误,请稍后再试', 1.5);
+    getConfig() {
+      this.lodings.noticeIsLoding = !this.lodings.noticeIsLoding;
+      this.$http.get("api/config").then(
+        async (response) => {
+          if (response.data.code === 200) {
+            if (
+              response.data.data.name != null &&
+              response.data.data.notice != null
+            ) {
+              this.config = response.data.data;
+              console.log(this.lodings.noticIsShow);
+              this.$set(this.lodings, "noticIsShow", !this.lodings.noticIsShow);
+              console.log(this.lodings.noticIsShow);
+              setTimeout(() => {
+                this.lodings.noticeIsLoding = !this.lodings.noticeIsLoding;
+              }, 200);
+            } else {
+            }
+          } else {
+            this.$message.error(response.data.msg, 2);
+          }
+        },
+        (response) => {
+          response;
+          this.$message.error(response.data.msg, 2);
         }
-      }, (response) => {
-        response
-        this.$message.error(response.data.msg, 2);
-      });
+      );
     },
-    nodeChange (value) {
+    nodeChange(value) {
       this.selecItem = this.servers[value - 1];
-    }
+    },
   },
 };
 </script>
@@ -315,4 +391,4 @@ export default {
   font-size: 14px;
   font-weight: bold;
 }
-</style> 
+</style>

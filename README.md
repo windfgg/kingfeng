@@ -19,10 +19,10 @@ KingFeng 仅支持 qinglong 2.9+
 ## 特性
 - [x] docker一键部署
 - [x] 支持wsck ptkey
-- [x] 用户添加/更新cookies 添加备注 
+- [x] 用户添加/更新cookies pinck添加或更新时检测是否过期 添加备注 
 - [x] 用户添加cookies 自动执行wskey转换任务
 - [x] 推送卡片
-- [x] 管理员登录
+- [x] 管理员登录 修改公告内容以及推送图片
 - [x] 多节点支持
 - [ ] 用户日资产卡片 用户上线/下线推送
 - [ ] 环境变量导出/恢复
@@ -98,11 +98,16 @@ PushImageUrl: https://img2.baidu.com/it/u=1007188585,453085648&fm=26&fmt=auto&gp
 请按照使用文档正确拉取 wskey转换库
 
 ## 项目指南
-有多种部署方法 请自行研究 下面只提供一种
+有多种部署方式 下面只提供一种docker部署
+如果你是N1或者其他软路由使用docker部署失败 恰好你也有基本**动手能力**和**思考能力** 我提供第二种[部署思路](#其他部署方式)(未测试)
 
 ### 第一次部署
+1. 在ssh执行:`docker exec -it 你的容器名称 bash`进入容器 `ql update`将更新青龙到最新 `ql check`检查青龙状态是否正确
+
+2. 进入青龙的控制面板创建应用 应用名称`KingFeng` 权限 `环境变量` `定时任务`
 ![KingFeng](https://i0.hdslb.com/bfs/album/d5e1df6f75e7835b699bdda295bbff4a4dce5a81.png)
 
+3. 复制粘贴到ssh执行下列命令 如出现无法拉取 请自行设置docker国内源
 ```docker
 docker pull ranqi03/kingfeng:latest
 
@@ -113,8 +118,9 @@ docker run -dit \
    --hostname kingfeng \
    ranqi03/kingfeng:latest
 ```
-配置docker映射目录下的config.yaml
-
+4.配置docker映射目录下的config.yaml 默认地址 `/用户名/kingfeng/config.yaml`
+- 查看容器IP命令 `docker inspect --format='{{.NetworkSettings.IPAddress}}' 容器名`
+- 如QL_URL使用容器IP 青龙默认部署IP为`5700` 例如我容器IP是`172.13.1.33` 那我QL_URL就是`http://172.13.1.33:5700/`
 ### 更新
 ```docker
 docker kill kingfeng && docker rm kingfeng
@@ -128,12 +134,30 @@ docker run -dit \
    --hostname kingfeng \
    ranqi03/kingfeng:latest
 ```
+### 其他部署方式
+我提供发布文件压缩包 有`linux-arm64` `liunx-arm` `liunx-x64` 可自行百度liunx安装.Net 运行时SDK 并尝试运行软件
+[.Net RunTime SDK](https://dotnet.microsoft.com/download) 请下载.Net5.0
+![](https://i0.hdslb.com/bfs/album/06d16311d2b8db23c295a3fc4a7a21033ac09cc3.png)
+切换到软件根目录
+**下列命令仅为参考**
+```bash
+chmod 777 KingFeng #给权限
+./KingFeng #运行KingFeng
+nohup ./JDC & #后台运行KingFeng
+
+ps -ajx|grep JDC #查看KingFeng 进程ID 有两行的话默认是第二行第二列的ID
+kill -9 进程ID #通过进程ID杀掉KingFeng 
+```
+
 ## 常见问题
+问:配置填写正确但是节点加载不出来
+答:请坚持服务器CPU是否爆高,如未爆高请在青龙容器内执行`ql update`以及`ql check` 具体内容请查看[项目指南](#第一次部署) 第1条命令
+
 问：是否支持内网端口？  
-答：支持,请百度docker容器互通网络。
+答：支持公网IP 域名 以及容器IP 推荐容器IP(安全性略高,速度稍微快)。
 
 问：为什么访问主页出现错误空提示？  
 答：一般为端口映射错误/失败，请自行检查配置文件。
 
 问：是否支持N1 Arm架构？  
-答：暂不支持。
+答：不支持。

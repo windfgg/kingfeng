@@ -5,28 +5,80 @@
       <div class="ant-card-head">
         <div class="ant-card-head-wrapper">
           <a-icon type="crown" theme="twoTone" />
-          <div class="ant-card-head-title">个人中心</div>
+          <div class="ant-card-head-title">
+            个人中心
+          </div>
         </div>
       </div>
       <div class="ant-card-body">
         <div>
           <a-input
-            type="text"
             v-model="secretkey"
+            type="text"
             placeholder="请输入新的SecretKey"
           />
         </div>
         <br />
         <div>
           <a-space size="large">
-            <a-button type="primary" shape="round" @click="updateadminkey"
-              >修改SecretKey
+            <a-button type="primary" shape="round" @click="updateadminkey">
+              修改SecretKey
             </a-button>
             <a-button type="danger" shape="round" @click="logout">
               退出登录
             </a-button>
           </a-space>
         </div>
+      </div>
+    </div>
+
+    <!-- 配置修改 -->
+    <div class="Card ant-card ant-card-bordered">
+      <div class="ant-card-head">
+        <div class="ant-card-head-wrapper">
+          <a-icon type="tool" theme="twoTone" />
+          <div class="ant-card-head-title">
+            配置管理
+          </div>
+        </div>
+      </div>
+      <div class="ant-card-body">
+        <a-spin :spinning="!isLoding">
+          <div v-show="isLoding">
+            <div>
+              <a-input
+                v-model="config.name"
+                type="text"
+                placeholder="公告来自谁"
+              />
+            </div>
+            <br />
+            <div>
+              <a-input
+                v-model="config.notice"
+                type="text"
+                placeholder="公告内容"
+              />
+            </div>
+            <br />
+            <div>
+              <a-input
+                v-model="config.push"
+                type="text"
+                placeholder="推送图片图床地址"
+              />
+            </div>
+            <br />
+            <a-space size="large">
+              <a-button type="primary" shape="round" @click="savaConfig">
+                保存配置
+              </a-button>
+              <a-button type="primary" shape="round" @click="open(config.push)">
+                预览推送图片
+              </a-button>
+            </a-space>
+          </div>
+        </a-spin>
       </div>
     </div>
 
@@ -51,170 +103,138 @@
         </div>
       </div>
     </div> -->
-
-    <!-- 执行任务 -->
-    <!-- <div class="Card ant-card ant-card-bordered">
-      <div class="ant-card-head">
-        <div class="ant-card-head-wrapper">
-          <a-icon type="tool" theme="twoTone" />
-          <div class="ant-card-head-title">执行任务</div>
-        </div>
-      </div>
-      <div class="ant-card-body">
-        <a-input
-          v-model="taskName"
-          type="text"
-          placeholder="请输入任务名"
-          style="width: 80%"
-        />
-
-        <div>
-          <br />
-          <a-space size="large">
-            <a-button type="primary" shape="round" @click="wskeytask">
-              wskey转换
-            </a-button>
-          </a-space>
-        </div>
-      </div>
-    </div> -->
-  
-    <!-- 任务日志 -->
-    <!-- <div class="Card ant-card ant-card-bordered">
-      <div class="ant-card-head">
-        <div class="ant-card-head-wrapper">
-          <a-icon type="tool" theme="twoTone" />
-          <div class="ant-card-head-title">任务日志</div>
-        </div>
-      </div>
-
-      <div class="ant-card-body">
-        <div>
-          <a-textarea id="logs" v-model="logs" rows="10" />
-        </div>
-        <br />
-      </div>
-    </div>
-  </div> -->
+  </div>
 </template>
 
 <script>
 //import Vue from 'vue'
 export default {
-  data () {
+  data() {
     return {
+      config: {
+        notice: undefined,
+        name: undefined,
+        push: undefined,
+      },
+      isLoding: false,
       taskName: "",
       logs: undefined,
       adminkey: "",
       timer: undefined,
-      secretkey: ""
-    }
+      secretkey: "",
+    };
   },
   //窗体刚创建没渲染时候
-  created () {
-    const adminkey = localStorage.getItem('adminkey')
+  created() {
+    const adminkey = localStorage.getItem("adminkey");
     if (adminkey) {
       this.$http.get("api/admin?key=" + adminkey).then((response) => {
         if (response.data.code === 200) {
+          this.$http.get("api/config").then(
+            async (response) => {
+              if (response.data.code === 200) {
+                this.config = response.data.data;
+                setTimeout(() => {
+                  this.isLoding = !this.isLoding;
+                }, 200);
+              } else {
+                this.$message.error(response.data.msg, 2);
+              }
+            },
+            (response) => {
+              response;
+              this.$message.error(response.data.msg, 2);
+            }
+          );
           //this.$message.success("欢迎回来", 1.5);
         } else {
           this.$message.error("SecretKey已被更改,请重新登录", 2);
-          localStorage.removeItem('adminkey');
-          this.$router.push('/')
+          localStorage.removeItem("adminkey");
+          this.$router.push("/");
         }
-      })
+      });
     } else {
-      this.$router.push('/')
+      this.$router.push("/");
     }
   },
   //渲染过后
-  mounted () {
-    this.adminkey = localStorage.getItem('adminkey')
+  mounted() {
+    this.adminkey = localStorage.getItem("adminkey");
 
-    document.title = 'KingFeng - 管理员'
+    document.title = "KingFeng - 管理员";
   },
   //销毁之前
-  beforeDestroy () {
+  beforeDestroy() {
     //clearInterval(this.timer) // 清除定时器
   },
   methods: {
-    // //执行任务
-    // task () {
-    //   // const taksName = ;
-    //   // const adminkey = ;
-    //   this.$http.put("api/task?taskName=" + this.taskName + "&key=" + this.adminkey).then((response) => {
-    //     if (response.data.code === 200) {
-    //       this.$message.success(this.taskName + "执行成功", 1.5);
-    //       // clearInterval(this.timer) // 清除定时器
-    //       // this.timer = setInterval(this.readLog, 1000) // 设置定时器
-    //     } else {
-    //       this.$message.error("错误:" + response.data.msg, 2);
-    //     }
-    //   });
-    // },
     //wskye任务
-    wskeytask () {
-      this.taskName = ''
-      this.$http.put("api/task?taskName=" + 'ws' + "&key=" + this.adminkey).then((response) => {
-        if (response.data.code === 200) {
-          this.$message.success("执行wskey转换成功", 1.5);
-          //clearInterval(this.timer) // 清除定时器
-          this.timer = setInterval(this.readLog, 1000) // 设置定时器
-        } else {
-          this.$message.error("错误:" + response.data.msg, 2);
-        }
-      });
-
+    wskeytask() {
+      this.taskName = "";
+      this.$http
+        .put("api/task?taskName=" + "ws" + "&key=" + this.adminkey)
+        .then((response) => {
+          if (response.data.code === 200) {
+            this.$message.success("执行wskey转换成功", 1.5);
+            //clearInterval(this.timer) // 清除定时器
+            this.timer = setInterval(this.readLog, 1000); // 设置定时器
+          } else {
+            this.$message.error("错误:" + response.data.msg, 2);
+          }
+        });
     },
-    // //读取日志
-    // readLog () {
-    //   console.log('执行一次')
-    //   var task = this.taskName == '' ? 'ws' : this.taskName
-    //   this.$http.get("api/log?taskName=" + task + "&key=" + this.adminkey).then((response) => {
-    //     if (response.data.code === 200) {
-    //       if (response.data.data.indexOf('执行结束') != -1) {
-    //         this.logs = response.data.data;
-    //         this.taskName = ''
-    //         const textarea = document.getElementById('logs');
-    //         textarea.scrollTop = textarea.scrollHeight;
-    //         clearInterval(this.timer) // 清除定时器 
-    //       } else {
-    //         //this.logs = response.data.data.replace(/\r|\n/ig, "");
-    //         const textarea = document.getElementById('logs');
-    //         textarea.scrollTop = textarea.scrollHeight;
-    //         this.logs = response.data.data;
-    //       }
-    //     } else {
-    //       this.$message.error("读取日志错误:" + response.data.msg, 2);
-    //     }
-    //   });
-    // },
     //退出登录
-    logout () {
-      localStorage.removeItem('adminkey');
+    logout() {
+      localStorage.removeItem("adminkey");
       // clearInterval(this.timer) // 清除定时器
       this.$message.success("退出成功", 1);
       setTimeout(() => {
-        this.$router.push('/')
-      }, 1000)
+        this.$router.push("/");
+      }, 1000);
+    },
+    //修改配置
+    savaConfig() {
+      let body = {
+        name: this.config.name,
+        push: this.config.push,
+        notice: this.config.notice,
+      };
+      this.$http.post("api/config", body).then((response) => {
+        if (response.data.code == 200) {
+          this.$message.success("更新配置成功", 1.5);
+        }
+      });
+    },
+    open(link) {
+      window.open(link, "_blank"); // 新窗口打开外链接
     },
     //修改adminkey
-    updateadminkey () {
-      this.$http.put('api/updateSecretKey?oldkey=' + localStorage.getItem('adminkey') + '&newkey=' + this.secretkey).then(response => {
-        if (response.data.code == 200) {
-          this.$message.success(response.data.msg + ' 请重新登录', 1.5)
-          localStorage.removeItem('adminkey');
-          this.$router.push('/')
-        } else if (response.data.code == 400) {
-          this.$message.error(response.data.msg, 1.5)
-        }
-      })
-    }
+    updateadminkey() {
+      this.$http
+        .put(
+          "api/updateSecretKey?oldkey=" +
+            localStorage.getItem("adminkey") +
+            "&newkey=" +
+            this.secretkey
+        )
+        .then((response) => {
+          if (response.data.code == 200) {
+            this.$message.success(response.data.msg + " 请重新登录", 1.5);
+            localStorage.removeItem("adminkey");
+            this.$router.push("/");
+          } else if (response.data.code == 400) {
+            this.$message.error(response.data.msg, 1.5);
+          }
+        });
+    },
   },
-}
+};
 </script>
 
 <style>
+.bc {
+  background-color: black;
+}
 .content {
   margin: auto;
   width: 91.666667%;

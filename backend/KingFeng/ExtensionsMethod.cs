@@ -47,11 +47,18 @@ namespace KingFeng
 
         public static JObject ToJobj(this string str)
         {
-            if (string.IsNullOrWhiteSpace(str))
+            try
             {
-                return default;
+                if (string.IsNullOrWhiteSpace(str))
+                {
+                    return default;
+                }
+                return JObject.Parse(str);
             }
-            return JObject.Parse(str);
+            catch
+            {
+                throw new ArgumentNullException("请检查配置文件是否正确,jsonToObj错误");
+            }
         }
 
         public static string GetTimeStamp()
