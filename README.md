@@ -50,7 +50,7 @@ Servers:
   QL_Client_Secret: LWasdpB4axklasdasdasd123Fr1i0O_ZMc 
   #最大添加ck容量 当前有的ck按照名称来统计 只要名称为JD_WSCK或者JD_COOKIE就会计数
   MaxCount: 100 
-#管理员密钥 会自动生成
+#管理员密钥 会自动生成 修改规则为必须包涵大小写字母+数字
 SecretKey: Hcw022703 
 #wskey转换任务名
 WsKeyTaskFullName: wskey转换 
@@ -80,7 +80,7 @@ Servers:
   QL_Client_ID: b5lTVasdasdL_4Z_xczxc123c
   QL_Client_Secret: LWOsdpB4axklasdaasdasdsdd1FrMc
   MaxCount: 100
-#管理员密钥 会自动生成
+#管理员密钥 会自动生成 修改规则为必须包涵大小写字母+数字
 SecretKey: Hcw022703 
 #wskey转换任务名
 WsKeyTaskFullName: wskey转换 
