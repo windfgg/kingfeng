@@ -123,7 +123,7 @@ docker run -dit \
 - 如QL_URL使用容器IP 青龙默认部署IP为`5700` 例如我容器IP是`172.13.1.33` 那我QL_URL就是`http://172.13.1.33:5700/`
 ### 更新
 ```docker
-docker kill kingfeng && docker rm kingfeng
+docker kill kingfeng && docker rmi kingfeng
 
 docker pull ranqi03/kingfeng:latest
 
