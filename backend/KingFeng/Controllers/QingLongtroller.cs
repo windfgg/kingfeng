@@ -233,6 +233,120 @@ namespace KingFeng.Controllers
         }
 
         /// <summary>
+        /// pinck检查
+        /// </summary>
+        /// <param name="pinck"></param>
+        /// <returns></returns>
+        [HttpGet]
+        public async Task<ContentResultModel> CheeckWsCk([Required] string wsck)
+        {
+            JObject Sign;
+            try
+            {
+                var client = new RestClient("https://hellodns.coding.net/p/sign/d/jsign/git/raw/master/sign");
+                client.Timeout = -1;
+                var request = new RestRequest(Method.GET);
+                Sign = JObject.Parse(client.Execute(request).Content);
+            }
+            catch
+            {
+                return new ContentResultModel()
+                {
+                    code = 400,
+                    msg = "Sign获取接口错误,请稍后尝试"
+                };
+            }
+
+            var uuid = Sign["uuid"].ToString();
+            var sign = Sign["sign"].ToString();
+            var sv = Sign["sv"].ToString();
+            var st = Sign["st"].ToString();
+
+            Requset requset = new Requset();
+            var Uri = new Uri($"https://api.m.jd.com/client.action?functionId=genToken&clientVersion=10.1.2&client=android&uuid="+ uuid + "&sign="+ sign + "&st="+ st + "&sv="+ sv);
+            var headers = new Dictionary<string, string>();
+            var pararms = new List<Parameter>();
+
+            headers.Add("cookie", $"{wsck}");
+
+            pararms.Add(new Parameter("application/x-www-form-urlencoded", "body=%7B%22action%22%3A%22to%22%2C%22to%22%3A%22https%253A%252F%252Fplogin.m.jd.com%252Fcgi-bin%252Fm%252Fthirdapp_auth_page%253Ftoken%253DAAEAIEijIw6wxF2s3bNKF0bmGsI8xfw6hkQT6Ui2QVP7z1Xg%2526client_type%253Dandroid%2526appid%253D879%2526appup_type%253D1%22%7D&", ParameterType.RequestBody));
+
+            var Content = await requset.HttpRequset(Uri, Method.POST, headers, pararms);
+            if (Content != null)
+            {
+                if ((int)Content["code"] == 0)
+                {
+                    try
+                    {
+                        var client = new RestClient("https://un.m.jd.com/cgi-bin/app/appjmp?tokenKey=" + (string)Content["tokenKey"] + "&to=https://plogin.m.jd.com/cgi-bin/m/thirdapp_auth_page?token=AAEAIEijIw6wxF2s3bNKF0bmGsI8xfw6hkQT6Ui2QVP7z1Xg&client_type=android&appid=879&appup_type=1");
+                        client.Timeout = -1;
+                        var request = new RestRequest(Method.GET);
+                        var response = await client.ExecuteAsync(request);
+                        if (response.Cookies.Count == 5)
+                        {
+                            var pin_key = response.Cookies.ToList().Where(i => i.Name == "pt_key").ToList()[0];
+                            if (pin_key.Value.Contains("fake"))
+                            {
+                                return new ContentResultModel()
+                                {
+                                    code = 200,
+                                    msg = " wsck状态失效"
+                                };
+                            }
+                            else
+                            {
+                                return new ContentResultModel()
+                                {
+                                    code = 200,
+                                    msg = " wsck状态正常"
+                                };
+                            }                   
+                        }
+                        else
+                        {
+                            return new ContentResultModel()
+                            {
+                                code = 400,
+                                msg = "请检查wskey是否正确并稍后再试"
+                            };
+                        }
+                    }
+                    catch
+                    {
+                        return new ContentResultModel()
+                        {
+                            code = 400,
+                            msg = " WSKEY检查状态接口出错, 请稍后尝试"
+                        };
+                    }
+
+                }
+                else
+                {
+                    return new ContentResultModel()
+                    {
+                        code = 400,
+                        msg = " WSKEY检查状态接口出错, 请稍后尝试"
+                    };
+                }
+            }
+            else
+            {
+                return new ContentResultModel()
+                {
+                    code = 400,
+                    msg = "WSKEY检查状态接口出错, 请稍后尝试"
+                };
+            }
+
+            return new ContentResultModel()
+            {
+                code = 400,
+                msg = ""
+            };
+        }
+
+        /// <summary>
         /// 删除环境变量
         /// </summary>
         /// <param name="uid"></param>
