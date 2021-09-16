@@ -50,7 +50,7 @@ Servers:
   QL_Client_Secret: LWasdpB4axklasdasdasd123Fr1i0O_ZMc 
   #最大添加ck容量 当前有的ck按照名称来统计 只要名称为JD_WSCK或者JD_COOKIE就会计数
   MaxCount: 100 
-#管理员密钥 会自动生成
+#管理员密钥 会自动生成 修改规则为必须包涵大小写字母+数字
 SecretKey: Hcw022703 
 #wskey转换任务名
 WsKeyTaskFullName: wskey转换 
@@ -80,7 +80,7 @@ Servers:
   QL_Client_ID: b5lTVasdasdL_4Z_xczxc123c
   QL_Client_Secret: LWOsdpB4axklasdaasdasdsdd1FrMc
   MaxCount: 100
-#管理员密钥 会自动生成
+#管理员密钥 会自动生成 修改规则为必须包涵大小写字母+数字
 SecretKey: Hcw022703 
 #wskey转换任务名
 WsKeyTaskFullName: wskey转换 
@@ -121,9 +121,10 @@ docker run -dit \
 4.配置docker映射目录下的config.yaml 默认地址 `/用户名/kingfeng/config.yaml`
 - 查看容器IP命令 `docker inspect --format='{{.NetworkSettings.IPAddress}}' 容器名`
 - 如QL_URL使用容器IP 青龙默认部署IP为`5700` 例如我容器IP是`172.13.1.33` 那我QL_URL就是`http://172.13.1.33:5700/`
+- 管理员登录 选择任意节点 输入配置文件的密钥 登录即可
 ### 更新
 ```docker
-docker kill kingfeng && docker rm kingfeng
+docker kill kingfeng && docker rmi kingfeng
 
 docker pull ranqi03/kingfeng:latest
 
@@ -138,12 +139,12 @@ docker run -dit \
 我提供发布文件压缩包 有`linux-arm64` `liunx-arm` `liunx-x64` 可自行百度liunx安装.Net 运行时SDK 并尝试运行软件
 [.Net RunTime SDK](https://dotnet.microsoft.com/download) 请下载.Net5.0
 ![](https://i0.hdslb.com/bfs/album/06d16311d2b8db23c295a3fc4a7a21033ac09cc3.png)
-切换到软件根目录
+切换到软件根目录 执行后台运行前 请打开网页检查是否可以正常访问
 **下列命令仅为参考**
 ```bash
 chmod 777 KingFeng #给权限
 ./KingFeng #运行KingFeng
-nohup ./JDC & #后台运行KingFeng
+nohup ./KingFeng & #后台运行KingFeng
 
 ps -ajx|grep JDC #查看KingFeng 进程ID 有两行的话默认是第二行第二列的ID
 kill -9 进程ID #通过进程ID杀掉KingFeng 
