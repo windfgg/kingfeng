@@ -139,12 +139,12 @@ docker run -dit \
 我提供发布文件压缩包 有`linux-arm64` `liunx-arm` `liunx-x64` 可自行百度liunx安装.Net 运行时SDK 并尝试运行软件
 [.Net RunTime SDK](https://dotnet.microsoft.com/download) 请下载.Net5.0
 ![](https://i0.hdslb.com/bfs/album/06d16311d2b8db23c295a3fc4a7a21033ac09cc3.png)
-切换到软件根目录
+切换到软件根目录 执行后台运行前 请打开网页检查是否可以正常访问
 **下列命令仅为参考**
 ```bash
 chmod 777 KingFeng #给权限
 ./KingFeng #运行KingFeng
-nohup ./JDC & #后台运行KingFeng
+nohup ./KingFeng & #后台运行KingFeng
 
 ps -ajx|grep JDC #查看KingFeng 进程ID 有两行的话默认是第二行第二列的ID
 kill -9 进程ID #通过进程ID杀掉KingFeng 
