@@ -121,6 +121,7 @@ docker run -dit \
 4.配置docker映射目录下的config.yaml 默认地址 `/用户名/kingfeng/config.yaml`
 - 查看容器IP命令 `docker inspect --format='{{.NetworkSettings.IPAddress}}' 容器名`
 - 如QL_URL使用容器IP 青龙默认部署IP为`5700` 例如我容器IP是`172.13.1.33` 那我QL_URL就是`http://172.13.1.33:5700/`
+- 管理员登录 选择任意节点 输入配置文件的密钥 登录即可
 ### 更新
 ```docker
 docker kill kingfeng && docker rmi kingfeng
