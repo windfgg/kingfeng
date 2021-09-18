@@ -13,6 +13,8 @@ KingFeng 仅供学习参考使用，请于下载后的 24 小时内删除，本�
 
 KingFeng 仅支持 qinglong 2.9+
 
+arm可以不用试了 没arm设备 调试不了
+
 不提供 `技术上的任何帮助`
 
 [TG 频道](https://t.me/joinchat/H3etBWYzLKpiMWVl)    [TG 群组](https://t.me/joinchat/XV2AZcvzFIUxNjI9)
@@ -99,7 +101,7 @@ PushImageUrl: https://img2.baidu.com/it/u=1007188585,453085648&fm=26&fmt=auto&gp
 
 ## 项目指南
 有多种部署方式 下面只提供一种docker部署
-如果你是N1或者其他软路由使用docker部署失败 恰好你也有基本**动手能力**和**思考能力** 我提供第二种[部署思路](#其他部署方式)(未测试)
+**arm不支持88不用试了
 
 ### 第一次部署
 1. 在ssh执行:`docker exec -it 你的容器名称 bash`进入容器 `ql update`将更新青龙到最新 `ql check`检查青龙状态是否正确
