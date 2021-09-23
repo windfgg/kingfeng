@@ -1,10 +1,17 @@
 # KingFeng
 
+<p align="center">
+    <a href="https://github.com/WindFgg/kingfeng"><img src="https://img.shields.io/pypi/l/dailycheckin?style=popout-square" alt="license"></a>
+    <a href="https://github.com/WindFgg/kingfeng"><img src="https://img.shields.io/github/stars/WindFgg/kingfeng.svg?style=popout-square" alt="GitHub stars"></a>
+    <a href="https://github.com/WindFgg/kingfeng"><img src="https://img.shields.io/github/forks/WindFgg/kingfeng.svg?style=popout-square" alt="GitHub forks"></a>
+    <a href="https://hub.docker.com/r/ranqi03/kingfeng"><img src="https://img.shields.io/docker/pulls/ranqi03/kingfeng?style=popout-square" alt="Docker Pulls"></a>
+    <a href="https://hub.docker.com/r/ranqi03/kingfeng"><img src="https://img.shields.io/docker/image-size/ranqi03/kingfeng?style=popout-square" alt="Docker Size"></a>
+    <a href="https://hub.docker.com/r/ranqi03/kingfeng"><img src="https://img.shields.io/docker/stars/ranqi03/kingfeng?style=popout-square" alt="Docker Stars"></a>
+</p>
+
 技术栈 `vue 2` `asp.net core` `docker` 
 
-本项目后端使用OpenAPI
-
-[docker image](https://hub.docker.com/r/ranqi03/kingfeng)
+本项目后端使用Swagger UI 生成的 OpenAPI文档
 
 ## 说明
 KingFeng 专注于用户无感体验 不会添加用户一对一推送
@@ -13,15 +20,15 @@ KingFeng 仅供学习参考使用，请于下载后的 24 小时内删除，本�
 
 KingFeng 仅支持 qinglong 2.9+
 
-arm可以不用试了 没arm设备 调试不了
+KingFeng不支持任何arm架构设备
 
-不提供 `技术上的任何帮助`
+本项目 不提供 `技术上的任何帮助`
 
 [TG 频道](https://t.me/joinchat/H3etBWYzLKpiMWVl)    [TG 群组](https://t.me/joinchat/XV2AZcvzFIUxNjI9)
 ## 特性
 - [x] docker一键部署
 - [x] 支持wsck ptkey
-- [x] 用户添加/更新cookies pinck添加或更新时检测是否过期 添加备注 
+- [x] 用户添加/更新cookies 检测是否过期 添加备注 
 - [x] 用户添加cookies 自动执行wskey转换任务
 - [x] 推送卡片
 - [x] 管理员登录 修改公告内容以及推送图片
@@ -33,7 +40,7 @@ arm可以不用试了 没arm设备 调试不了
 - [ ] 用户wskey管理
 
 ### 插件
-[苹果捷径获取pinck](https://www.icloud.com/shortcuts/f6046f1e79ad4ee6bcca6d2b078bd25a)
+[苹果捷径获取pinck 需要国外Apple Id安装ScriptsTable](https://www.icloud.com/shortcuts/f6046f1e79ad4ee6bcca6d2b078bd25a)
 ### 配置文件
 配置文件第一次部署后端会自动生成
 配置文件所有项必填 如不填(**无法预知的后果**)
