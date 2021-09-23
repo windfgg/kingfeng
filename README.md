@@ -24,6 +24,8 @@ KingFeng不支持任何arm架构设备
 
 本项目 不提供 `技术上的任何帮助`
 
+本项目 **暂停更新一段时间**
+
 [TG 频道](https://t.me/joinchat/H3etBWYzLKpiMWVl)    [TG 群组](https://t.me/joinchat/XV2AZcvzFIUxNjI9)
 ## 特性
 - [x] docker一键部署
@@ -108,7 +110,8 @@ PushImageUrl: https://img2.baidu.com/it/u=1007188585,453085648&fm=26&fmt=auto&gp
 
 ## 项目指南
 有多种部署方式 下面只提供一种docker部署
-**arm不支持88不用试了
+
+**Arm暂不支持 可以不用试了**
 
 ### 第一次部署
 1. 在ssh执行:`docker exec -it 你的容器名称 bash`进入容器 `ql update`将更新青龙到最新 `ql check`检查青龙状态是否正确
@@ -144,7 +147,7 @@ docker run -dit \
    --hostname kingfeng \
    ranqi03/kingfeng:latest
 ```
-### 其他部署方式
+<!-- ### 其他部署方式
 我提供发布文件压缩包 有`linux-arm64` `liunx-arm` `liunx-x64` 可自行百度liunx安装.Net 运行时SDK 并尝试运行软件
 [.Net RunTime SDK](https://dotnet.microsoft.com/download) 请下载.Net5.0
 ![](https://i0.hdslb.com/bfs/album/06d16311d2b8db23c295a3fc4a7a21033ac09cc3.png)
@@ -157,11 +160,10 @@ nohup ./KingFeng & #后台运行KingFeng
 
 ps -ajx|grep JDC #查看KingFeng 进程ID 有两行的话默认是第二行第二列的ID
 kill -9 进程ID #通过进程ID杀掉KingFeng 
-```
-
+``` -->
 ## 常见问题
-Q:配置填写正确但是节点加载不出来
-A:请检查服务器CPU是否爆高,如未爆高请在青龙容器内执行`ql update`以及`ql check` 具体内容请查看[项目指南](#第一次部署) 第1条命令
+Q：配置填写正确但是节点加载不出来
+A：请检查服务器CPU是否爆高,如未爆高请在青龙容器内执行`ql update`以及`ql check` 具体内容请查看[项目指南](#第一次部署) 第1步
 
 Q：是否支持内网端口？  
 A：支持公网IP 域名 以及容器IP 推荐容器IP(安全性略高,速度稍微快)。

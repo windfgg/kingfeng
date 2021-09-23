@@ -59,6 +59,11 @@ namespace KingFeng.Controllers
 
             headers.Add("Authorization", $"{ServerState.token}");
 
+            foreach (var item in envs)
+            {
+                item.remarks = "KingFeng:" + item.remarks;
+            }
+
             var body = envs.ToJson();
 
             parameters.Add(new Parameter("application/json", body, ParameterType.RequestBody));
@@ -233,7 +238,7 @@ namespace KingFeng.Controllers
         }
 
         /// <summary>
-        /// pinck检查
+        /// wsck检查
         /// </summary>
         /// <param name="pinck"></param>
         /// <returns></returns>
@@ -289,8 +294,8 @@ namespace KingFeng.Controllers
                             {
                                 return new ContentResultModel()
                                 {
-                                    code = 200,
-                                    msg = " wsck状态失效"
+                                    code = 400,
+                                    msg = " wsck状态失效或填写错误"
                                 };
                             }
                             else
@@ -713,6 +718,135 @@ namespace KingFeng.Controllers
         #endregion
 
         #region 配置
+
+        /// <summary>
+        /// 用户是否存在
+        /// </summary>
+        /// <param name="uid"></param>
+        /// <returns></returns>
+        [HttpGet]
+        public async Task<ContentResultModel> Userexitst([Required] string ql_url, [Required] string cookies)
+        {
+            var Results = new Dictionary<string, object>();
+
+            var ServerState = await CheckServer(ql_url);
+            if (string.IsNullOrWhiteSpace(ServerState.token))
+            {
+                return new ContentResultModel()
+                {
+                    code = 400
+                };
+            }
+            Requset requset = new Requset();
+            var Uri = new Uri($"{ql_url}open/envs?t={ExtensionsMethod.GetTimeStamp()}");
+            var headers = new Dictionary<string, string>();
+            var parameters = new List<Parameter>();
+            headers.Add("Authorization", $"{ServerState.token}");
+
+            var Content = await requset.HttpRequset(Uri, Method.GET, headers, parameters);
+            if (Content.ContainsKey("code") || Content["code"].ToString() == "200")
+            {
+                var ContentData = Content["data"].ToString().JsonTo<List<EnvModel2>>();
+                if (!string.IsNullOrWhiteSpace(cookies))
+                {
+                    var pin = Regex.Match(cookies, "pin=(.*?);").Value.Replace(";","").Split("=")[1];
+                    if (pin == "")
+                    {
+                        pin= Regex.Match(cookies, "pt_pin=(.*?);").Value.Replace(";", "").Split("=")[1];
+                    }
+                   
+                    var ContentData1 = ContentData.Where(i => i.name.Contains("JD_")).ToList();
+                    var ContentData2 = ContentData1.Where(i => Regex.Matches(i.value, pin).Count==1?true:false).ToList();
+                    if (ContentData2 != null && ContentData2.Count != 0)
+                    {
+                        string _id;
+                        string remark;
+                        foreach (var item in ContentData2)
+                        {
+                            if (item.name == "JD_WSCK")
+                            {
+                                _id = item._id;
+                                if (!string.IsNullOrWhiteSpace(item.remarks))
+                                {
+                                    if (item.remarks.Contains("KingFeng"))
+                                    {
+                                        remark = item.remarks.Split(":")[1];
+                                    }
+                                    else
+                                    {
+                                        remark = item.remarks;
+                                    }    
+                                }
+                                else
+                                {
+                                    remark = item.remarks;
+                                }
+
+                                return new ContentResultModel()
+                                {
+                                    code = 200,
+                                    data = _id,
+                                    msg= remark
+                                };
+                            }
+                            else if(item.name == "JD_COOKIE")
+                            {
+                                _id = item._id;
+                                if (!string.IsNullOrWhiteSpace(item.remarks))
+                                {
+                                    if (item.remarks.Contains("KingFeng"))
+                                    {
+                                        remark = item.remarks.Split(":")[1];
+                                    }
+                                    else
+                                    {
+                                        remark = item.remarks;
+                                    }
+                                   
+                                }
+                                else
+                                {
+                                    remark = item.remarks;
+                                }
+                                return new ContentResultModel()
+                                {
+                                    code = 200,
+                                    data = _id,
+                                    msg = remark
+                                };
+                            }
+                        }
+                        return new ContentResultModel()
+                        {
+                            code = 400
+                        };
+                    }
+                    else
+                    {
+                        return new ContentResultModel()
+                        {
+                            code = 400
+                        };
+                    }
+                }
+                else
+                {
+                    return new ContentResultModel()
+                    {
+                        code = 400
+                    };
+                }
+
+            }
+            else
+            {
+                return new ContentResultModel()
+                {
+                    code = 400,
+                    msg = "服务繁忙"
+                };
+            }
+        }
 
         /// <summary>
         /// 用户是否存在

@@ -30,6 +30,9 @@
             <a-button type="primary" shape="round" @click="updatewskey">
               更新cookies
             </a-button>
+            <a-button type="primary" shape="round" @click="logout">
+              退出登录
+            </a-button>
             <a-button type="danger" shape="round" @click="remove">
               删除账号
             </a-button>
@@ -250,6 +253,11 @@ export default {
       localStorage.removeItem("uid");
       localStorage.removeItem("name");
       localStorage.removeItem("address");
+    },
+    logout() {
+      this.delete();
+      this.$message.success("退出登录成功", 2);
+      this.$router.push("/");
     },
   },
 };

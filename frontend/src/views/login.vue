@@ -30,9 +30,7 @@
         <div class="ant-card-head">
           <div class="ant-card-head-wrapper">
             <a-icon type="radar-chart" style="color: #2c99ff" />
-            <div class="ant-card-head-title">
-              节点选择
-            </div>
+            <div class="ant-card-head-title">节点选择</div>
           </div>
         </div>
         <div class="ant-card-body">
@@ -62,9 +60,7 @@
       <div class="ant-card-head">
         <div class="ant-card-head-wrapper">
           <a-icon type="code" theme="twoTone" />
-          <div class="ant-card-head-title">
-            Cookies登录
-          </div>
+          <div class="ant-card-head-title">Cookies登录</div>
         </div>
       </div>
       <div class="ant-card-body">
@@ -149,7 +145,7 @@ export default {
     this.getConfig();
   },
   methods: {
-    CookiesCheck() {
+    async CookiesCheck() {
       this.$set(this.isLogin, "loading", true);
       const ql_url = this.selecItem.address;
       //判断wskey格式
@@ -168,65 +164,122 @@ export default {
         this.cookies.match(/pt_pin=(.*?);/) &&
         this.cookies.match(/pt_pin=(.*?);/)[1];
       if (pin && wskey) {
-        //判断wskey
-        if (this.remarks == "") {
-          this.$message.error("备注不能为空", 1.5);
-          this.$set(this.isLogin, "loading", false);
-          return;
-        } else {
-          if (this.remarks.length < 3) {
-            this.$message.error("备注不能少于三个字", 1.5);
-            this.$set(this.isLogin, "loading", false);
-            return;
-          }
-        }
-        var WSCK = [
-          {
-            name: "JD_WSCK",
-            value: this.cookies,
-            remarks: this.remarks,
-          },
-        ];
-        this.$http.post("api/env?ql_url=" + ql_url, WSCK).then(
-          (response) => {
+        this.$http
+          .get("api/Userexitst?ql_url=" + ql_url + "&cookies=" + this.cookies)
+          .then((response) => {
             if (response.data.code === 200) {
-              //console.log(response.data.data._id[0]);
-              localStorage.setItem("uid", response.data.data._id[0]);
+              localStorage.setItem("name", response.data.msg);
+              localStorage.setItem("address", ql_url);
+              localStorage.setItem("uid", response.data.data);
+              this.$message.success("欢迎回来 " + response.data.msg, 2);
               setTimeout(() => {
                 this.$router.push({
                   name: "Index",
                   params: { push: this.push },
                 });
               }, 1000);
-              localStorage.setItem("name", this.remarks);
-              localStorage.setItem("address", ql_url);
-              this.$message.success("欢迎回来 " + this.remarks, 2);
-            } else {
-              this.$message.error(response.data.msg, 1.5);
-              this.$set(this.isLogin, "loading", false);
-              return;
-            }
-          },
-          (response) => {
-            this.$message.error(response.data.msg, 1.5);
-            this.$set(this.isLogin, "loading", false);
-            return;
-          }
-        );
-      } else if (pt_key && pt_pin) {
-        //判断是否pinkey
-
-        this.$http
-          .get("api/CheeckPinCk?pinck=" + this.cookies)
-          .then((response) => {
-            if (response.data.code != 200) {
-              this.$message.error("请检查pinck 是否过期以及是否正确", 1.5);
-              this.$set(this.isLogin, "loading", false);
               return;
             } else {
-              if (this.remarks.length == "") {
-                this.remarks = pt_pin;
+              if (this.remarks == "") {
+                this.$message.error("备注不能为空", 1.5);
+                this.$set(this.isLogin, "loading", false);
+                return;
+              } else {
+                if (this.remarks.length < 3) {
+                  this.$message.error("备注长度不能少于三个字", 1.5);
+                  this.$set(this.isLogin, "loading", false);
+                  return;
+                }
+                if (this.remarks.length > 20) {
+                  this.$message.error("备注长度不能超过二十个字", 1.5);
+                  this.$set(this.isLogin, "loading", false);
+                  return;
+                }
               }
+              //判断wskey
+              var WSCK = [
+                {
+                  name: "JD_WSCK",
+                  value: this.cookies,
+                  remarks: this.remarks,
+                },
+              ];
+
+              this.$http
+                .get("api/CheeckWsCk?wsck=" + this.cookies)
+                .then((response) => {
+                  if (response.data.code === 200) {
+                    this.$http.post("api/env?ql_url=" + ql_url, WSCK).then(
+                      (response) => {
+                        if (response.data.code === 200) {
+                          //console.log(response.data.data._id[0]);
+                          localStorage.setItem(
+                            "uid",
+                            response.data.data._id[0]
+                          );
+                          setTimeout(() => {
+                            this.$router.push({
+                              name: "Index",
+                              params: { push: this.push },
+                            });
+                          }, 1000);
+                          localStorage.setItem("name", this.remarks);
+                          localStorage.setItem("address", ql_url);
+                          this.$message.success("欢迎回来 " + this.remarks, 2);
+                        } else {
+                          this.$message.error(response.data.msg, 1.5);
+                          this.$set(this.isLogin, "loading", false);
+                          return;
+                        }
+                      },
+                      (response) => {
+                        this.$message.error(response.data.msg, 1.5);
+                        this.$set(this.isLogin, "loading", false);
+                        return;
+                      }
+                    );
+                  } else {
+                    this.$message.error(response.data.msg, 1.5);
+                    this.$set(this.isLogin, "loading", false);
+                  }
+                });
+            }
+          });
+      } else if (pt_key && pt_pin) {
+        this.$http
+          .get("api/Userexitst?ql_url=" + ql_url + "&cookies=" + this.cookies)
+          .then((response) => {
+            if (response.data.code === 200) {
+              localStorage.setItem("name", response.data.msg);
+              localStorage.setItem("address", ql_url);
+              localStorage.setItem("uid", response.data.data);
+              this.$message.success("欢迎回来 " + response.data.msg, 2);
+              setTimeout(() => {
+                this.$router.push({
+                  name: "Index",
+                  params: { push: this.push },
+                });
+              }, 1000);
+              return;
+            } else {
+              //判断是否pinkey
+              if (this.remarks == "") {
+                this.$message.error("备注不能为空", 1.5);
+                this.$set(this.isLogin, "loading", false);
+                return;
+              } else {
+                if (this.remarks.length < 3) {
+                  this.$message.error("备注长度不能少于三个字", 1.5);
+                  this.$set(this.isLogin, "loading", false);
+                  return;
+                }
+                if (this.remarks.length > 20) {
+                  this.$message.error("备注长度不能超过二十个字", 1.5);
+                  this.$set(this.isLogin, "loading", false);
+                  return;
+                }
+              }
+
               var PTCK = [
                 {
                   name: "JD_COOKIE",
@@ -234,32 +287,45 @@ export default {
                   remarks: this.remarks,
                 },
               ];
-              this.$http.post("api/env?ql_url=" + ql_url, PTCK).then(
-                (response) => {
-                  if (response.data.code === 200) {
-                    localStorage.setItem("uid", response.data.data._id[0]);
-                    localStorage.setItem("name", this.remarks);
 
-                    setTimeout(() => {
-                      this.$router.push({
-                        name: "Index",
-                        params: { push: this.push },
-                      });
-                    }, 1000);
-                    localStorage.setItem("address", ql_url);
-                    this.$message.success("欢迎回来 " + this.remarks, 2);
-                    this.$set(this.isLogin, "loading", false);
-                    return;
+              this.$http
+                .get("api/CheeckPinCk?pinck=" + this.cookies)
+                .then((response) => {
+                  if (response.data.code == 200) {
+                    this.$http.post("api/env?ql_url=" + ql_url, PTCK).then(
+                      (response) => {
+                        if (response.data.code === 200) {
+                          localStorage.setItem(
+                            "uid",
+                            response.data.data._id[0]
+                          );
+                          localStorage.setItem("name", this.remarks);
+
+                          setTimeout(() => {
+                            this.$router.push({
+                              name: "Index",
+                              params: { push: this.push },
+                            });
+                          }, 1000);
+                          localStorage.setItem("address", ql_url);
+                          this.$message.success("欢迎回来 " + this.remarks, 2);
+                          this.$set(this.isLogin, "loading", false);
+                          return;
+                        } else {
+                          this.$message.error(response.data.msg, 1.5);
+                          this.$set(this.isLogin, "loading", false);
+                          return;
+                        }
+                      },
+                      (response) => {
+                        this.$message.error(response.data.msg, 1.5);
+                      }
+                    );
                   } else {
                     this.$message.error(response.data.msg, 1.5);
                     this.$set(this.isLogin, "loading", false);
-                    return;
                   }
-                },
-                (response) => {
-                  this.$message.error(response.data.msg, 1.5);
-                }
-              );
+                });
             }
           });
       } else {
