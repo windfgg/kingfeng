@@ -1,5 +1,5 @@
 # KingFeng
-![预览图片](https://raw.githubusercontent.com/WindFgg/kingfeng/main/Preview.png)
+
 <p align="center">
     <a href="https://github.com/WindFgg/kingfeng"><img src="https://img.shields.io/pypi/l/dailycheckin?style=popout-square" alt="license"></a>
     <a href="https://github.com/WindFgg/kingfeng"><img src="https://img.shields.io/github/stars/WindFgg/kingfeng.svg?style=popout-square" alt="GitHub stars"></a>
@@ -12,6 +12,8 @@
 技术栈 `vue 2` `asp.net core` `docker` 
 
 本项目后端使用Swagger UI 生成的 OpenAPI文档
+
+![预览图片](https://raw.githubusercontent.com/WindFgg/kingfeng/main/Preview.png)
 
 ## 说明
 KingFeng 专注于用户无感体验 不会添加用户一对一推送
