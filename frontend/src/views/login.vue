@@ -15,9 +15,7 @@
               <div class="ant-card-head-title">{{ config.name }}温馨提醒您</div>
             </div>
           </div>
-          <div class="ant-card-body">
-            {{ config.notice }}
-          </div>
+          <div class="ant-card-body" v-html="config.notice"></div>
         </div>
       </a-spin>
     </div>
