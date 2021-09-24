@@ -1,5 +1,5 @@
 # KingFeng
-
+![预览图片](https://raw.githubusercontent.com/WindFgg/kingfeng/main/Preview.png)
 <p align="center">
     <a href="https://github.com/WindFgg/kingfeng"><img src="https://img.shields.io/pypi/l/dailycheckin?style=popout-square" alt="license"></a>
     <a href="https://github.com/WindFgg/kingfeng"><img src="https://img.shields.io/github/stars/WindFgg/kingfeng.svg?style=popout-square" alt="GitHub stars"></a>
@@ -32,8 +32,8 @@ KingFeng不支持任何arm架构设备
 - [x] 支持wsck ptkey
 - [x] 用户添加/更新cookies 检测是否过期 添加备注 
 - [x] 用户添加cookies 自动执行wskey转换任务
-- [x] 推送卡片
-- [x] 管理员登录 修改公告内容以及推送图片
+- [x] 推送卡片 自定义公告 支持html语法
+- [x] 管理员在线登录修改配置
 - [x] 多节点支持
 - [ ] 用户日资产卡片 用户上线/下线推送
 - [ ] 环境变量导出/恢复
