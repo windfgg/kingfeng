@@ -1,5 +1,5 @@
 # KingFeng
-![https://raw.githubusercontent.com/WindFgg/kingfeng/main/Preview.png](预览图片)
+![预览图片](https://raw.githubusercontent.com/WindFgg/kingfeng/main/Preview.png)
 <p align="center">
     <a href="https://github.com/WindFgg/kingfeng"><img src="https://img.shields.io/pypi/l/dailycheckin?style=popout-square" alt="license"></a>
     <a href="https://github.com/WindFgg/kingfeng"><img src="https://img.shields.io/github/stars/WindFgg/kingfeng.svg?style=popout-square" alt="GitHub stars"></a>
