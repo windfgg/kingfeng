@@ -196,6 +196,20 @@ namespace KingFeng.Controllers
             var Uri = new Uri($"https://plogin.m.jd.com/cgi-bin/ml/islogin");
             var headers = new Dictionary<string, string>();
 
+            var pin = Regex.Match(pinck, "pt_pin=(.*?);").Value.UrlEncode();
+            var key = Regex.Match(pinck, "pt_key=(.*?);").Value;
+
+            if (string.IsNullOrWhiteSpace(pin) && string.IsNullOrWhiteSpace(key))
+            {
+                return new ContentResultModel()
+                {
+                    code = 400,
+                    msg = "请检查pinck格式是否正确"
+                };
+            }
+
+            pinck = $"{key}pt_pin={pin};";
+
             headers.Add("Cookie", $"{pinck}");
             headers.Add("referer", $"https://h5.m.jd.com/");
             headers.Add("User-Agent", $"jdapp;iPhone;10.1.2;15.0;network/wifi;Mozilla/5.0 (iPhone; CPU iPhone OS 15_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148;supportJDSHWK/1");
@@ -272,6 +286,19 @@ namespace KingFeng.Controllers
             var headers = new Dictionary<string, string>();
             var pararms = new List<Parameter>();
 
+            var pin = Regex.Match(wsck, "pin=(.*?);").Value.UrlEncode();
+            var key = Regex.Match(wsck, "wskey=(.*?);").Value;
+
+            if (string.IsNullOrWhiteSpace(pin) && string.IsNullOrWhiteSpace(key))
+            {
+                return new ContentResultModel()
+                {
+                    code = 400,
+                    msg = "请检查pinck格式是否正确"
+                };
+            }
+
+            wsck = $"pin={pin};{key}";
             headers.Add("cookie", $"{wsck}");
 
             pararms.Add(new Parameter("application/x-www-form-urlencoded", "body=%7B%22action%22%3A%22to%22%2C%22to%22%3A%22https%253A%252F%252Fplogin.m.jd.com%252Fcgi-bin%252Fm%252Fthirdapp_auth_page%253Ftoken%253DAAEAIEijIw6wxF2s3bNKF0bmGsI8xfw6hkQT6Ui2QVP7z1Xg%2526client_type%253Dandroid%2526appid%253D879%2526appup_type%253D1%22%7D&", ParameterType.RequestBody));

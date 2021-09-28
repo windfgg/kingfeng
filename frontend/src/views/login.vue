@@ -149,7 +149,6 @@ export default {
       //判断wskey格式
       const pin =
         this.cookies.match(/pin=(.*?);/) && this.cookies.match(/pin=(.*?);/)[1];
-      pin == decodeURIComponent(pin);
       const wskey =
         this.cookies.match(/wskey=(.*?);/) &&
         this.cookies.match(/wskey=(.*?);/)[1];
@@ -157,7 +156,6 @@ export default {
       const pt_key =
         this.cookies.match(/pt_key=(.*?);/) &&
         this.cookies.match(/pt_key=(.*?);/)[1];
-      pin == decodeURIComponent(pin);
       const pt_pin =
         this.cookies.match(/pt_pin=(.*?);/) &&
         this.cookies.match(/pt_pin=(.*?);/)[1];
