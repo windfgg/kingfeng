@@ -138,7 +138,7 @@ docker run -dit \
 - 管理员登录 选择任意节点 输入配置文件的密钥 登录即可
 ### 更新
 ```docker
-docker kill kingfeng && docker rmi kingfeng
+docker kill kingfeng && docker rm kingfeng && docker rmi ranqi03/kingfeng
 
 docker pull ranqi03/kingfeng:latest
 
