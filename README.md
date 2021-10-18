@@ -32,7 +32,8 @@ KingFeng不支持任何arm架构设备
 
 ## 支持的架构
 ![image](https://user-images.githubusercontent.com/87279659/137679751-7c2e901f-0429-4c5c-a6d2-120b8848048f.png)
-查看地址:https://github.com/dotnet/core/blob/main/os-lifecycle-policy.md
+查看地址:https://github.com/dotnet/core/blob/main/release-notes/5.0/5.0-supported-os.md
+
 不支持也没办法 .NET不支持
 ## 特性
 - [x] docker一键部署
