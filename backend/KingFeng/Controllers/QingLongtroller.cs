@@ -157,6 +157,8 @@ namespace KingFeng.Controllers
 
                 var Content = await requset.HttpRequset(Uri, Method.PUT, headers, parameters);
 
+                enableEnv(ql_url, uid, ServerState.token); //更新过后启用环境变量
+
                 if (Content.ContainsKey("code") || Content["code"].ToString() == "200")
                 {
                     _logger.LogInformation($"用户{env.name}修改环境变量成功");
@@ -182,6 +184,29 @@ namespace KingFeng.Controllers
                 code = 400,
                 msg = "服务繁忙"
             };
+        }
+
+        /// <summary>
+        /// 启用环境变量
+        /// </summary>
+        /// <param name="ql_url"></param>
+        /// <param name="uid"></param>
+        /// <param name="token"></param>
+        private async void enableEnv(string ql_url, string uid, string token)
+        {
+            var uidList = new List<string>();
+            uidList.Add(uid);
+
+            Requset requset = new Requset();
+            var Uri = new Uri($"{ql_url}open/envs/enable?t={ExtensionsMethod.GetTimeStamp()}");
+            var headers = new Dictionary<string, string>();
+            var parameters = new List<Parameter>();
+            parameters.Add(new Parameter("application/json", uidList.ToJson(), ParameterType.RequestBody));
+            headers.Add("Authorization", $"{token}");
+
+            var Content = await requset.HttpRequset(Uri, Method.PUT, headers, parameters);
+
+            _logger.LogInformation(Content.ToJson());
         }
 
         /// <summary>
@@ -282,7 +307,7 @@ namespace KingFeng.Controllers
             var st = Sign["st"].ToString();
 
             Requset requset = new Requset();
-            var Uri = new Uri($"https://api.m.jd.com/client.action?functionId=genToken&clientVersion=10.1.2&client=android&uuid="+ uuid + "&sign="+ sign + "&st="+ st + "&sv="+ sv);
+            var Uri = new Uri($"https://api.m.jd.com/client.action?functionId=genToken&clientVersion=10.1.2&client=android&uuid=" + uuid + "&sign=" + sign + "&st=" + st + "&sv=" + sv);
             var headers = new Dictionary<string, string>();
             var pararms = new List<Parameter>();
 
@@ -332,7 +357,7 @@ namespace KingFeng.Controllers
                                     code = 200,
                                     msg = " wsck状态正常"
                                 };
-                            }                   
+                            }
                         }
                         else
                         {
@@ -745,7 +770,6 @@ namespace KingFeng.Controllers
         #endregion
 
         #region 配置
-
         /// <summary>
         /// 用户是否存在
         /// </summary>
@@ -776,14 +800,14 @@ namespace KingFeng.Controllers
                 var ContentData = Content["data"].ToString().JsonTo<List<EnvModel2>>();
                 if (!string.IsNullOrWhiteSpace(cookies))
                 {
-                    var pin = Regex.Match(cookies, "pin=(.*?);").Value.Replace(";","").Split("=")[1];
+                    var pin = Regex.Match(cookies, "pin=(.*?);").Value.Replace(";", "").Split("=")[1];
                     if (pin == "")
                     {
-                        pin= Regex.Match(cookies, "pt_pin=(.*?);").Value.Replace(";", "").Split("=")[1];
+                        pin = Regex.Match(cookies, "pt_pin=(.*?);").Value.Replace(";", "").Split("=")[1];
                     }
-                   
+
                     var ContentData1 = ContentData.Where(i => i.name.Contains("JD_")).ToList();
-                    var ContentData2 = ContentData1.Where(i => Regex.Matches(i.value, pin).Count==1?true:false).ToList();
+                    var ContentData2 = ContentData1.Where(i => Regex.Matches(i.value, pin).Count == 1 ? true : false).ToList();
                     if (ContentData2 != null && ContentData2.Count != 0)
                     {
                         string _id;
@@ -802,7 +826,7 @@ namespace KingFeng.Controllers
                                     else
                                     {
                                         remark = item.remarks;
-                                    }    
+                                    }
                                 }
                                 else
                                 {
@@ -813,10 +837,10 @@ namespace KingFeng.Controllers
                                 {
                                     code = 200,
                                     data = _id,
-                                    msg= remark
+                                    msg = remark
                                 };
                             }
-                            else if(item.name == "JD_COOKIE")
+                            else if (item.name == "JD_COOKIE")
                             {
                                 _id = item._id;
                                 if (!string.IsNullOrWhiteSpace(item.remarks))
@@ -829,7 +853,7 @@ namespace KingFeng.Controllers
                                     {
                                         remark = item.remarks;
                                     }
-                                   
+
                                 }
                                 else
                                 {
@@ -989,7 +1013,7 @@ namespace KingFeng.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpPost]
-        public ContentResultModel config([Required]UpdateConfigItemModel model)
+        public ContentResultModel config([Required] UpdateConfigItemModel model)
         {
             if (model.name == "") model.name = null;
             if (model.notice == "") model.notice = null;
@@ -1085,13 +1109,25 @@ namespace KingFeng.Controllers
                 foreach (var item in _config.config.Servers)
                 {
                     Id++;
+                    var CurrentCount = await GetCurrentCount(item);
+                    string Text = "";
+                    int Count = 0;
+                    if (CurrentCount >= item.MaxCount)
+                    {
+                        Count = ((int)CurrentCount - item.MaxCount) + 1;
+                        Text = "     (余量为0,仅限重新登录)";
+                    }
+                    else
+                    {
+                        Text = "     (" + $"当前:{CurrentCount} 最大:{item.MaxCount}" + ")";
+                    }
                     list.Add(new ConfigItemModel1()
                     {
                         ID = Id,
-                        Name = item.QL_Name,
+                        Name = item.QL_Name + Text,
                         Address = item.QL_URL,
-                        MaxCount = item.MaxCount,
-                        CurrentCount = await GetCurrentCount(item)
+                        MaxCount = item.MaxCount + Count,
+                        CurrentCount = CurrentCount
                         //CurrentCount = item.MaxCount
                     });
                 }

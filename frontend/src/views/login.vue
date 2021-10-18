@@ -176,6 +176,11 @@ export default {
               }, 1000);
               return;
             } else {
+              if (this.selecItem.maxCount - 1 == this.selecItem.currentCount) {
+                this.$message.warning("当前ck数量达到最大数值,无法添加ck ", 2);
+                this.$set(this.isLogin, "loading", false);
+                return;
+              }
               if (this.remarks == "") {
                 this.$message.error("备注不能为空", 1.5);
                 this.$set(this.isLogin, "loading", false);
@@ -258,6 +263,11 @@ export default {
               }, 1000);
               return;
             } else {
+              if (this.selecItem.maxCount - 1 == this.selecItem.currentCount) {
+                this.$message.warning("当前ck数量达到最大数值,无法添加ck ", 2);
+                this.$set(this.isLogin, "loading", false);
+                return;
+              }
               //判断是否pinkey
               if (this.remarks == "") {
                 this.$message.error("备注不能为空", 1.5);
@@ -408,6 +418,7 @@ export default {
     },
     nodeChange(value) {
       this.selecItem = this.servers[value - 1];
+      console.log(this.selecItem);
     },
   },
 };
